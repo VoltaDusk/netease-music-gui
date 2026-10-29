@@ -2,14 +2,14 @@
 import { ref } from "vue";
 import { X, Server, CheckCircle2, AlertCircle, Terminal, Sun, Moon } from "lucide-vue-next";
 import { api } from "../services/api";
-import { playerState } from "../store/player";
+import { playerState, playerActions } from "../store/player";
 import { themeState, themeActions } from "../store/theme";
+import type { SongQuality } from "../types";
 
 const apiUrl = ref(api.getBaseUrl());
 const testStatus = ref<"idle" | "testing" | "success" | "error">("idle");
 const testMessage = ref("");
 const latency = ref(0);
-const audioQuality = ref("standard");
 
 function close() {
   playerState.isSettingsOpen = false;
@@ -118,20 +118,23 @@ pnpm start</pre>
         <!-- 3. Audio Quality -->
         <div class="space-y-2">
           <label class="block text-xs font-semibold text-[#f1f0e9]">
-            播放音质等级
+            默认播放音质等级
           </label>
           <div class="grid grid-cols-3 gap-2 text-xs">
             <button
               v-for="q in [
-                { id: 'standard', label: '标准 (128k)' },
-                { id: 'higher', label: '极高 (320k)' },
-                { id: 'lossless', label: '无损 (FLAC)' },
+                { id: 'standard', label: '标准 (128K)' },
+                { id: 'higher', label: '较高 (192K)' },
+                { id: 'exhigh', label: '极高 (320K)' },
+                { id: 'lossless', label: '无损 (SQ)' },
+                { id: 'hires', label: 'Hi-Res' },
+                { id: 'jymaster', label: '超清母带' },
               ]"
               :key="q.id"
-              @click="audioQuality = q.id"
-              class="py-2 px-3 rounded-[9px] border text-center transition-all font-mono"
+              @click="playerActions.setQuality(q.id as SongQuality)"
+              class="py-2 px-2.5 rounded-[9px] border text-center transition-all font-mono text-[11px]"
               :class="
-                audioQuality === q.id
+                playerState.quality === q.id
                   ? 'bg-[#23261f] border-[#d6f379]/40 text-[#d6f379] font-bold'
                   : 'bg-[#141612] border-white/[0.06] text-[#8d9188] hover:text-[#f1f0e9]'
               "

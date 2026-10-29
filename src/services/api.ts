@@ -167,6 +167,19 @@ export class ApiService {
     }
   }
 
+  // 2.1 推荐新音乐 / 推荐单曲
+  public async getPersonalizedNewsongs(limit = 10): Promise<Song[]> {
+    try {
+      const res = await this.request<{ result?: any[] }>(`/personalized/newsong?limit=${limit}`);
+      if (res && res.result && res.result.length > 0) {
+        return res.result.map((item: any) => formatSong(item.song || item));
+      }
+    } catch {
+      // ignore
+    }
+    return DEMO_SONGS;
+  }
+
   // 3. 所有官方排行榜
   public async getToplist(): Promise<Playlist[]> {
     try {
@@ -283,7 +296,7 @@ export class ApiService {
     return {
       url: `https://music.163.com/song/media/outer/url?id=${id}.mp3`,
       br: 128000,
-      level: "standard",
+      level: level,
     };
   }
 
@@ -629,7 +642,9 @@ export class ApiService {
   }
 }
 
-export const DEFAULT_COVER_URL = "https://p2.music.126.net/a4KYp477snGHe3ZyjVpe1w==/109951165351505570.jpg";
+// 统一默认唱片封面：高质感黑胶黑曜石唱片矢量图，防404与加载失败
+export const DEFAULT_COVER_URL =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='12' fill='%23191c16'/%3E%3Ccircle cx='60' cy='60' r='48' fill='%2322271d' stroke='%23383e30' stroke-width='1.5'/%3E%3Ccircle cx='60' cy='60' r='38' fill='none' stroke='%232b3124' stroke-width='1'/%3E%3Ccircle cx='60' cy='60' r='28' fill='none' stroke='%23383e30' stroke-width='1'/%3E%3Ccircle cx='60' cy='60' r='18' fill='%23d6f379' fill-opacity='0.25' stroke='%23d6f379' stroke-width='1.5'/%3E%3Ccircle cx='60' cy='60' r='6' fill='%23191c16'/%3E%3C/svg%3E";
 export const DEFAULT_AVATAR_URL = "https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg";
 
 function formatSong(raw: any): Song {
@@ -716,7 +731,7 @@ export const DEMO_SONGS: Song[] = [
     al: {
       id: 74715426,
       name: "起风了",
-      picUrl: "https://p1.music.126.net/diGAyEmpymHgQIsnRHnm Hewitt==/109951163699673355.jpg",
+      picUrl: "https://p2.music.126.net/diGAyEmpymX8G7JcnElncQ==/109951163699673355.jpg?param=200y200",
     },
     dt: 325851,
   },
@@ -727,7 +742,7 @@ export const DEMO_SONGS: Song[] = [
     al: {
       id: 18896,
       name: "叶惠美",
-      picUrl: "https://p1.music.126.net/wCTPt49wh19Bq0zI97vWqw==/109951167874744158.jpg",
+      picUrl: "https://p2.music.126.net/ZGffiDQZrGj5s_hnR1CNbg==/109951165566379710.jpg?param=200y200",
     },
     dt: 269000,
   },
@@ -738,7 +753,7 @@ export const DEMO_SONGS: Song[] = [
     al: {
       id: 137142551,
       name: "孤勇者",
-      picUrl: "https://p1.music.126.net/aG5dp9aTpan19V5Cf2Sy2A==/109951166595697817.jpg",
+      picUrl: "https://p2.music.126.net/HXfXIIBCk5w96MiY1Wdsqw==/109951171836610847.jpg?param=200y200",
     },
     dt: 256000,
   },
@@ -749,7 +764,7 @@ export const DEMO_SONGS: Song[] = [
     al: {
       id: 34209,
       name: "海阔天空",
-      picUrl: "https://p1.music.126.net/r9p4A6qFf1X4o021n4d-tA==/109951163111197825.jpg",
+      picUrl: "https://p1.music.126.net/iAwVf8ag_45csIUuh1wSZg==/109951168912558470.jpg?param=200y200",
     },
     dt: 324000,
   },

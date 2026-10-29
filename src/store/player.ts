@@ -1,6 +1,6 @@
 import { reactive } from "vue";
 import type { Song, PlayMode, LyricLine, SongQuality, QualityOption } from "../types";
-import { api, DEMO_SONGS } from "../services/api";
+import { api, DEMO_SONGS, DEFAULT_COVER_URL } from "../services/api";
 import { userState } from "./user";
 
 const audio = new Audio();
@@ -10,6 +10,30 @@ const STORAGE_KEY_LIKED = "cloudmusic_liked_ids";
 const STORAGE_KEY_LIKED_SONGS = "cloudmusic_liked_songs_cache";
 const STORAGE_KEY_HISTORY = "cloudmusic_history";
 const STORAGE_KEY_QUALITY = "cloudmusic_preferred_quality";
+
+export const VERIFIED_COVERS: Record<number, string> = {
+  1330348068: "https://p2.music.126.net/diGAyEmpymX8G7JcnElncQ==/109951163699673355.jpg?param=200y200", // 起风了
+  186016: "https://p2.music.126.net/ZGffiDQZrGj5s_hnR1CNbg==/109951165566379710.jpg?param=200y200",     // 晴天
+  1901371647: "https://p2.music.126.net/HXfXIIBCk5w96MiY1Wdsqw==/109951171836610847.jpg?param=200y200", // 孤勇者
+  347230: "https://p1.music.126.net/iAwVf8ag_45csIUuh1wSZg==/109951168912558470.jpg?param=200y200",     // 海阔天空
+};
+
+export function sanitizeSongCover(song: Song): Song {
+  if (!song) return song;
+  const clone = { ...song };
+  if (VERIFIED_COVERS[clone.id]) {
+    clone.al = {
+      ...(clone.al || { id: 0, name: clone.name }),
+      picUrl: VERIFIED_COVERS[clone.id],
+    };
+  } else if (!clone.al?.picUrl || clone.al.picUrl.includes("109951165351505570") || clone.al.picUrl.includes("Hewitt")) {
+    clone.al = {
+      ...(clone.al || { id: 0, name: clone.name }),
+      picUrl: DEFAULT_COVER_URL,
+    };
+  }
+  return clone;
+}
 
 function loadLikedIds(): Set<number> {
   try {
@@ -23,24 +47,44 @@ function loadLikedIds(): Set<number> {
 function loadLikedSongsCache(): Song[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY_LIKED_SONGS);
-    return raw ? JSON.parse(raw) : [];
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        const sanitized = parsed.map(sanitizeSongCover);
+        localStorage.setItem(STORAGE_KEY_LIKED_SONGS, JSON.stringify(sanitized));
+        return sanitized;
+      }
+    }
   } catch {
-    return [];
+    // ignore
   }
+  return [];
 }
 
 function loadHistory(): Song[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY_HISTORY);
-    return raw ? JSON.parse(raw) : DEMO_SONGS.slice(0, 3);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        const sanitized = parsed.map(sanitizeSongCover);
+        localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(sanitized));
+        return sanitized;
+      }
+    }
   } catch {
-    return [];
+    // ignore
   }
+  const initial = DEMO_SONGS.map(sanitizeSongCover);
+  localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(initial));
+  return initial;
 }
+
+const savedQuality = (localStorage.getItem(STORAGE_KEY_QUALITY) || "lossless") as SongQuality;
 
 export const playerState = reactive({
   currentSong: null as Song | null,
-  playlist: [...DEMO_SONGS] as Song[],
+  playlist: [...DEMO_SONGS].map(sanitizeSongCover) as Song[],
   currentIndex: 0,
   isPlaying: false,
   currentTime: 0,
@@ -61,8 +105,8 @@ export const playerState = reactive({
   hasError: false,
   errorMessage: "",
   // 歌曲音质管理
-  quality: (localStorage.getItem(STORAGE_KEY_QUALITY) || "lossless") as SongQuality,
-  actualQuality: "lossless" as SongQuality,
+  quality: savedQuality,
+  actualQuality: savedQuality,
   currentBitrate: 0,
   availableQualities: [
     { level: "jymaster", label: "超清母带", badge: "MASTER", sub: "Master 24bit/192kHz", available: false },
@@ -127,8 +171,9 @@ function updateLyricIndex(time: number) {
 
 export const playerActions = {
   async playSong(song: Song, newPlaylist?: Song[]) {
+    song = sanitizeSongCover(song);
     if (newPlaylist && newPlaylist.length > 0) {
-      playerState.playlist = [...newPlaylist];
+      playerState.playlist = newPlaylist.map(sanitizeSongCover);
       const idx = playerState.playlist.findIndex((s) => s.id === song.id);
       playerState.currentIndex = idx !== -1 ? idx : 0;
     } else {
@@ -172,6 +217,8 @@ export const playerActions = {
       playerState.currentBitrate = res.br || 0;
       if (res.level) {
         playerState.actualQuality = res.level;
+      } else {
+        playerState.actualQuality = playerState.quality;
       }
       audio.src = res.url;
       audio.play().catch((err) => {
@@ -185,6 +232,7 @@ export const playerActions = {
 
   async setQuality(level: SongQuality) {
     playerState.quality = level;
+    playerState.actualQuality = level; // 立即同步更新当前实际音质状态
     localStorage.setItem(STORAGE_KEY_QUALITY, level);
 
     if (!playerState.currentSong) return;

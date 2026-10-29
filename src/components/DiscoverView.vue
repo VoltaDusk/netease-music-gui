@@ -2,7 +2,7 @@
 import { ref, onMounted, computed } from "vue";
 import { Play, Headphones, Heart } from "lucide-vue-next";
 import { api, DEMO_SONGS, DEFAULT_COVER_URL } from "../services/api";
-import { playerState, playerActions } from "../store/player";
+import { playerState, playerActions, sanitizeSongCover } from "../store/player";
 import type { Banner, Playlist, Song } from "../types";
 
 const emit = defineEmits<{
@@ -12,7 +12,7 @@ const emit = defineEmits<{
 
 const banners = ref<Banner[]>([]);
 const playlists = ref<Playlist[]>([]);
-const newSongs = ref<Song[]>(DEMO_SONGS);
+const newSongs = ref<Song[]>(DEMO_SONGS.map(sanitizeSongCover));
 const isLoading = ref(true);
 
 const todayWeekday = computed(() => {
@@ -20,14 +20,26 @@ const todayWeekday = computed(() => {
   return days[new Date().getDay()];
 });
 
+// "最近常听" 列表：优先使用用户真实的播放历史（已全部修正专辑封面），未播放时展示精选推荐
+const recentSongs = computed(() => {
+  if (playerState.history && playerState.history.length > 0) {
+    return playerState.history.slice(0, 8);
+  }
+  return newSongs.value;
+});
+
 onMounted(async () => {
   try {
-    const [bannerRes, playlistRes] = await Promise.all([
+    const [bannerRes, playlistRes, recSongsRes] = await Promise.allSettled([
       api.getBanners(),
       api.getPersonalizedPlaylists(8),
+      api.getPersonalizedNewsongs(8),
     ]);
-    banners.value = bannerRes;
-    playlists.value = playlistRes;
+    if (bannerRes.status === "fulfilled") banners.value = bannerRes.value;
+    if (playlistRes.status === "fulfilled") playlists.value = playlistRes.value;
+    if (recSongsRes.status === "fulfilled" && recSongsRes.value.length > 0) {
+      newSongs.value = recSongsRes.value.map(sanitizeSongCover);
+    }
   } catch (err) {
     console.error("Discover load error:", err);
   } finally {
@@ -53,18 +65,20 @@ function formatDuration(ms: number): string {
 }
 
 function startListening() {
-  if (newSongs.value.length > 0) {
-    playerActions.playSong(newSongs.value[0], newSongs.value);
+  if (recentSongs.value.length > 0) {
+    playerActions.playSong(recentSongs.value[0], recentSongs.value);
   }
 }
 
 function playSong(song: Song) {
-  playerActions.playSong(song, newSongs.value);
+  playerActions.playSong(song, recentSongs.value);
 }
 
 function handleImgError(e: Event) {
   const target = e.target as HTMLImageElement;
-  target.src = DEFAULT_COVER_URL;
+  if (target.src !== DEFAULT_COVER_URL) {
+    target.src = DEFAULT_COVER_URL;
+  }
 }
 </script>
 
@@ -191,7 +205,7 @@ function handleImgError(e: Event) {
 
       <div class="space-y-0.5">
         <div
-          v-for="(song, idx) in newSongs"
+          v-for="(song, idx) in recentSongs"
           :key="song.id"
           @dblclick="playSong(song)"
           class="h-14 px-3 grid grid-cols-12 items-center gap-2 border-b border-white/[0.08] text-xs text-[#8d9188] hover:bg-[#1b1e19] transition-colors cursor-pointer group rounded-lg"

@@ -75,7 +75,9 @@ function playSong(song: Song) {
 
 function handleImgError(e: Event) {
   const target = e.target as HTMLImageElement;
-  target.src = DEFAULT_COVER_URL;
+  if (target.src !== DEFAULT_COVER_URL) {
+    target.src = DEFAULT_COVER_URL;
+  }
 }
 </script>
 

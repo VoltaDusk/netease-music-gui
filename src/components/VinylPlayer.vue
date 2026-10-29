@@ -10,6 +10,13 @@ function close() {
   playerState.isVinylOpen = false;
 }
 
+function handleImgError(e: Event) {
+  const target = e.target as HTMLImageElement;
+  if (target.src !== DEFAULT_COVER_URL) {
+    target.src = DEFAULT_COVER_URL;
+  }
+}
+
 // Auto-scroll lyrics to keep active line centered
 watch(
   () => playerState.currentLyricIndex,
@@ -123,6 +130,7 @@ watch(
                 <img
                   :src="playerState.currentSong?.al?.picUrl || DEFAULT_COVER_URL"
                   alt="cover"
+                  @error="handleImgError"
                   class="w-full h-full object-cover"
                 />
                 <!-- Spindle Center Hole -->

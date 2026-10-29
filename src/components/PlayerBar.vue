@@ -40,12 +40,12 @@ const qualityLabelMap: Record<SongQuality, string> = {
 };
 
 const currentQualityBadge = computed(() => {
-  const activeLevel = playerState.actualQuality || playerState.quality;
-  return qualityBadgeMap[activeLevel] || "LOSSLESS";
+  const activeLevel = playerState.quality || playerState.actualQuality || "lossless";
+  return qualityBadgeMap[activeLevel] || String(activeLevel).toUpperCase();
 });
 
 const currentQualityLabel = computed(() => {
-  const activeLevel = playerState.actualQuality || playerState.quality;
+  const activeLevel = playerState.quality || playerState.actualQuality || "lossless";
   return qualityLabelMap[activeLevel] || "无损音质";
 });
 
@@ -60,6 +60,8 @@ function closeQualityMenu() {
 async function selectQuality(level: SongQuality, available?: boolean) {
   if (available === false) return;
   isQualityMenuOpen.value = false;
+  playerState.quality = level;
+  playerState.actualQuality = level;
   await playerActions.setQuality(level);
 }
 
@@ -118,7 +120,9 @@ function toggleQueue() {
 
 function handleImgError(e: Event) {
   const target = e.target as HTMLImageElement;
-  target.src = DEFAULT_COVER_URL;
+  if (target.src !== DEFAULT_COVER_URL) {
+    target.src = DEFAULT_COVER_URL;
+  }
 }
 </script>
 
