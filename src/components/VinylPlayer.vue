@@ -40,7 +40,7 @@ watch(
 <template>
   <div
     v-if="playerState.isVinylOpen"
-    class="fixed inset-0 z-50 flex flex-col select-none overflow-hidden bg-[#10110f] animate-in fade-in duration-300"
+    class="vinyl-player-root fixed inset-0 z-50 flex flex-col select-none overflow-hidden bg-[#10110f] animate-in fade-in duration-300"
   >
     <!-- Dynamic Ambient Blurred Cover Art Background -->
     <div
@@ -49,7 +49,7 @@ watch(
         backgroundImage: `url(${playerState.currentSong?.al?.picUrl || DEFAULT_COVER_URL})`,
       }"
     ></div>
-    <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/85 pointer-events-none"></div>
+    <div class="vinyl-player-overlay absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/85 pointer-events-none"></div>
 
     <!-- Top Action Bar -->
     <header class="h-16 px-8 flex items-center justify-between z-10">
@@ -114,7 +114,7 @@ watch(
 
           <!-- Turntable Platter Outer Rim -->
           <div
-            class="w-72 h-72 rounded-full bg-[#171916] border-4 border-[#282b22] flex items-center justify-center shadow-2xl relative"
+            class="turntable-platter w-72 h-72 rounded-full bg-[#171916] border-4 border-[#282b22] flex items-center justify-center shadow-2xl relative"
           >
             <!-- Rotating Vinyl Disc -->
             <div
@@ -142,7 +142,7 @@ watch(
 
         <!-- Album & Info Under Record -->
         <div class="mt-6 text-center">
-          <span class="text-xs px-3 py-1 rounded-[7px] bg-white/[0.06] border border-white/[0.08] text-[#8d9188]">
+          <span class="album-badge text-xs px-3 py-1 rounded-[7px] bg-white/[0.06] border border-white/[0.08] text-[#8d9188]">
             专辑：{{ playerState.currentSong?.al?.name || "未知专辑" }}
           </span>
         </div>
@@ -165,22 +165,22 @@ watch(
             >
               <p
                 class="leading-relaxed transition-all duration-300"
-                :class="
+                :class="[
                   playerState.currentLyricIndex === idx
-                    ? 'text-[#d6f379] text-2xl font-bold scale-105 origin-left drop-shadow-[0_4px_12px_rgba(214,243,121,0.3)]'
-                    : 'text-[#8d9188] text-lg opacity-40 group-hover:opacity-90 group-hover:text-[#f1f0e9]'
-                "
+                    ? 'lyric-active text-[#d6f379] text-2xl font-bold scale-105 origin-left drop-shadow-[0_4px_12px_rgba(214,243,121,0.3)]'
+                    : 'lyric-inactive text-[#8d9188] text-lg opacity-40 group-hover:opacity-90 group-hover:text-[#f1f0e9]'
+                ]"
               >
                 {{ line.text }}
               </p>
               <p
                 v-if="line.translation"
                 class="text-xs mt-1 transition-opacity duration-300"
-                :class="
+                :class="[
                   playerState.currentLyricIndex === idx
-                    ? 'text-[#e0bb78] font-medium opacity-90'
-                    : 'text-[#686d65] opacity-40'
-                "
+                    ? 'lyric-trans-active text-[#e0bb78] font-medium opacity-90'
+                    : 'lyric-trans-inactive text-[#686d65] opacity-40'
+                ]"
               >
                 {{ line.translation }}
               </p>

@@ -345,40 +345,45 @@ html.light .border-\[\#e0bb78\]\/30 {
 }
 
 /* Typography / Text Colors */
-html.light .text-\[\#f1f0e9\] {
-  color: #1a1d16 !important;
+html.light .text-\[\#f1f0e9\],
+html.light .text-\[\#f4f3ec\],
+html.light .text-\[\#f5f5f0\] {
+  color: #151911 !important;
 }
 
-html.light .hover\:text-\[\#f1f0e9\]:hover {
-  color: #0d0f0b !important;
+html.light .hover\:text-\[\#f1f0e9\]:hover,
+html.light .hover\:text-\[\#f4f3ec\]:hover,
+html.light .hover\:text-\[\#f5f5f0\]:hover {
+  color: #0b0d09 !important;
 }
 
 html.light .text-\[\#a8aca3\],
 html.light .text-\[\#c6c9c0\],
+html.light .text-\[\#c6cbbe\],
 html.light .text-\[\#9ca095\],
 html.light .text-\[\#b3b7aa\],
 html.light .text-\[\#c4c8bc\] {
-  color: #4a5142 !important;
+  color: #3b4233 !important;
 }
 
 html.light .hover\:text-\[\#a8aca3\]:hover {
-  color: #353b2f !important;
+  color: #1f251a !important;
 }
 
 html.light .text-\[\#8d9188\] {
-  color: #636b5a !important;
+  color: #4f5847 !important;
 }
 
 html.light .text-\[\#686d65\] {
-  color: #7b8371 !important;
+  color: #5c6653 !important;
 }
 
 html.light .text-\[\#d6f379\] {
-  color: #496b1b !important;
+  color: #385a12 !important;
 }
 
 html.light .hover\:text-\[\#d6f379\]:hover {
-  color: #344e13 !important;
+  color: #263e0b !important;
 }
 
 html.light .text-\[\#1a1d13\] {
@@ -386,11 +391,11 @@ html.light .text-\[\#1a1d13\] {
 }
 
 html.light .text-\[\#e0bb78\] {
-  color: #b45309 !important;
+  color: #92540b !important;
 }
 
 html.light .fill-\[\#d6f379\] {
-  fill: #496b1b !important;
+  fill: #385a12 !important;
 }
 
 html.light .fill-\[\#1a1d13\] {
@@ -398,17 +403,17 @@ html.light .fill-\[\#1a1d13\] {
 }
 
 html.light .bg-\[\#d6f379\]\/\[0\.03\] {
-  background-color: rgba(73, 107, 27, 0.05) !important;
+  background-color: rgba(56, 90, 18, 0.05) !important;
 }
 
 html.light .bg-\[\#d6f379\]\/15,
 html.light .bg-\[\#d6f379\]\/20 {
-  background-color: rgba(73, 107, 27, 0.12) !important;
+  background-color: rgba(56, 90, 18, 0.12) !important;
 }
 
 /* Accent for audio slider */
 html.light .accent-\[\#d6f379\] {
-  accent-color: #496b1b !important;
+  accent-color: #385a12 !important;
 }
 
 /* Light Mode Equalizer Waves */
@@ -416,13 +421,46 @@ html.light .wave-bar-1,
 html.light .wave-bar-2,
 html.light .wave-bar-3,
 html.light .wave-bar-4 {
-  background-color: #496b1b !important;
+  background-color: #385a12 !important;
+}
+
+/* Badges overlaying cover art or dark surfaces must preserve crisp white text */
+html.light .bg-black\/60,
+html.light .bg-black\/70,
+html.light .bg-black\/80 {
+  background-color: rgba(0, 0, 0, 0.65) !important;
+}
+
+html.light .bg-black\/60 *,
+html.light .bg-black\/70 *,
+html.light .bg-black\/80 * {
+  color: #ffffff !important;
+}
+
+html.light .bg-black\/60 svg,
+html.light .bg-black\/70 svg {
+  color: #d6f379 !important;
 }
 
 /* Light Mode Hero Banner */
 html.light section[style*="radial-gradient"] {
   background: radial-gradient(ellipse at 78% 50%, rgba(133, 161, 88, 0.28), transparent 45%), linear-gradient(110deg, #e4ecda, #edf2e6 55%, #e6efe1) !important;
   border-color: rgba(79, 115, 29, 0.2) !important;
+}
+
+html.light section[style*="radial-gradient"] h1 {
+  color: #121c0b !important;
+  font-weight: 800 !important;
+}
+
+html.light section[style*="radial-gradient"] p {
+  color: #324227 !important;
+  font-weight: 500 !important;
+}
+
+html.light section[style*="radial-gradient"] span.font-mono {
+  color: #27470b !important;
+  font-weight: 700 !important;
 }
 
 html.light .hero-disc {
@@ -440,5 +478,90 @@ html.light ::-webkit-scrollbar-thumb {
 }
 
 html.light ::-webkit-scrollbar-thumb:hover {
-  background: #496b1b !important;
+  background: #385a12 !important;
+}
+
+/* ==========================================================================
+   Vinyl Player - Light Theme Optimization
+   ========================================================================== */
+html.light .vinyl-player-root {
+  background-color: #f7f6f1 !important;
+}
+
+html.light .vinyl-player-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(247, 246, 241, 0.92),
+    rgba(240, 238, 228, 0.76),
+    rgba(247, 246, 241, 0.96)
+  ) !important;
+}
+
+html.light .vinyl-player-root .turntable-platter {
+  background-color: #eae7dc !important;
+  border-color: #d6d2c2 !important;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.1), inset 0 2px 6px rgba(255, 255, 255, 0.7) !important;
+}
+
+html.light .vinyl-player-root .tonearm circle[fill="#2d3027"] {
+  fill: #dedbd0 !important;
+  stroke: #beb9a7 !important;
+}
+html.light .vinyl-player-root .tonearm circle[fill="#141612"] {
+  fill: #828a78 !important;
+}
+html.light .vinyl-player-root .tonearm path[stroke="#c2c7b5"] {
+  stroke: #5d6354 !important;
+}
+
+html.light .vinyl-player-root header button {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #353d2d !important;
+}
+html.light .vinyl-player-root header button:hover {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+  color: #12160e !important;
+}
+
+html.light .vinyl-player-root header h2 {
+  color: #141a10 !important;
+  font-weight: 700 !important;
+}
+html.light .vinyl-player-root header p {
+  color: #424c39 !important;
+  font-weight: 500 !important;
+}
+
+html.light .vinyl-player-root .album-badge {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #323b2b !important;
+  font-weight: 500 !important;
+}
+
+/* Fluid Scrolling Lyrics in Light Mode */
+html.light .vinyl-player-root .lyric-active {
+  color: #27490b !important;
+  text-shadow: 0 2px 10px rgba(39, 73, 11, 0.2) !important;
+  font-weight: 800 !important;
+  filter: none !important;
+}
+
+html.light .vinyl-player-root .lyric-inactive {
+  color: #4e5845 !important;
+  opacity: 0.6 !important;
+}
+html.light .vinyl-player-root .lyric-inactive:hover {
+  opacity: 0.95 !important;
+  color: #12160e !important;
+}
+
+html.light .vinyl-player-root .lyric-trans-active {
+  color: #8c5208 !important;
+  font-weight: 600 !important;
+}
+html.light .vinyl-player-root .lyric-trans-inactive {
+  color: #646e5a !important;
+  opacity: 0.7 !important;
 }
