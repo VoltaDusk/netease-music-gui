@@ -96,12 +96,12 @@ function handleImgError(e: Event) {
         </span>
 
         <!-- Poetic Headline -->
-        <h1 class="text-3xl md:text-4xl font-bold text-[#f1f0e9] tracking-[-1.5px] leading-tight my-3.5">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-[#f4f3ec] tracking-normal leading-tight my-3.5">
           让音乐，陪你<br />慢下来。
         </h1>
 
         <!-- Subtitle Paragraph -->
-        <p class="text-xs text-[#b3b7aa] leading-relaxed mb-6">
+        <p class="text-xs text-[#c6cbbe] leading-relaxed mb-6 font-normal">
           从熟悉的旋律，到还没听过的好歌。今天的灵感歌单，已经为你准备好了。
         </p>
 

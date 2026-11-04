@@ -125,7 +125,6 @@ onUnmounted(() => {
         <DiscoverView
           v-if="currentView === 'discover'"
           @select-playlist="handleSelectPlaylist"
-          @view-all-playlists="navigateTo('playlists')"
         />
 
         <ToplistView

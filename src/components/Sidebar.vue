@@ -12,7 +12,6 @@ const emit = defineEmits<{
 
 const mainNavItems = [
   { id: "discover", label: "为你推荐", symbol: "⌂" },
-  { id: "playlists", label: "探索音乐", symbol: "⌕" },
   { id: "toplist", label: "权威榜单", symbol: "〽" },
 ];
 
