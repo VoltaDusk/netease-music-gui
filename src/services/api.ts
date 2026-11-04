@@ -726,7 +726,7 @@ function formatSong(raw: any): Song {
   }
 
   if (picUrl && !picUrl.includes("?param=")) {
-    picUrl = `${picUrl}?param=200y200`;
+    picUrl = `${picUrl}?param=400y400`;
   }
 
   if (!picUrl) {

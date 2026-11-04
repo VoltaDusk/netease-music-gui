@@ -88,10 +88,10 @@ watch(
     <main class="flex-1 flex flex-col md:flex-row items-center justify-center px-10 pb-8 gap-12 z-10 overflow-hidden">
       <!-- Left: Turntable with Tonearm and Vinyl Record -->
       <div class="w-full md:w-1/2 flex flex-col items-center justify-center relative">
-        <div class="relative w-80 h-80 flex items-center justify-center">
+        <div class="relative w-84 h-84 flex items-center justify-center">
           <!-- Tonearm Stylus -->
           <div
-            class="absolute -top-12 right-12 w-28 h-36 z-20 pointer-events-none tonearm"
+            class="absolute -top-12 right-10 w-28 h-36 z-20 pointer-events-none tonearm"
             :class="playerState.isPlaying ? 'tonearm-playing' : 'tonearm-paused'"
           >
             <!-- Stylus Arm Graphic -->
@@ -114,19 +114,19 @@ watch(
 
           <!-- Turntable Platter Outer Rim -->
           <div
-            class="turntable-platter w-72 h-72 rounded-full bg-[#171916] border-4 border-[#282b22] flex items-center justify-center shadow-2xl relative"
+            class="turntable-platter w-76 h-76 rounded-full bg-[#171916] border-4 border-[#282b22] flex items-center justify-center shadow-2xl relative"
           >
             <!-- Rotating Vinyl Disc -->
             <div
-              class="w-68 h-68 rounded-full flex items-center justify-center relative animate-spin-slow"
+              class="w-72 h-72 rounded-full flex items-center justify-center relative animate-spin-slow"
               :class="{ paused: !playerState.isPlaying }"
               style="
                 background: repeating-radial-gradient(circle, #242720 0 3px, #181a16 4px 7px);
                 box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 25px rgba(0,0,0,0.6);
               "
             >
-              <!-- Center Album Cover -->
-              <div class="w-28 h-28 rounded-full overflow-hidden border-4 border-black/80 shadow-inner flex items-center justify-center relative">
+              <!-- Center Album Cover (Enlarged artwork with refined vinyl groove border) -->
+              <div class="w-48 h-48 rounded-full overflow-hidden border-4 border-black/80 shadow-inner flex items-center justify-center relative">
                 <img
                   :src="playerState.currentSong?.al?.picUrl || DEFAULT_COVER_URL"
                   alt="cover"
