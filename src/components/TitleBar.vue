@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { invoke } from "@tauri-apps/api/core";
+import { getCurrentWindow } from "@tauri-apps/api/window";
+
+const appWindow = getCurrentWindow();
 import {
   Minus,
   Square,
@@ -62,23 +65,25 @@ function handleLogout() {
   api.logout();
 }
 
-function startDrag(e: MouseEvent) {
+async function startDrag(e: MouseEvent) {
   if (e.button !== 0) return;
   const target = e.target as HTMLElement;
   if (target.closest("button, input, textarea, a, select, [role='button'], .no-drag")) {
     return;
   }
-  invoke("drag_window").catch((err) => {
-    console.warn("drag_window error:", err);
-  });
+  try {
+    await appWindow.startDragging();
+  } catch {
+    invoke("drag_window").catch(() => {});
+  }
 }
 
-function handleHeaderDblClick(e: MouseEvent) {
+async function handleHeaderDblClick(e: MouseEvent) {
   const target = e.target as HTMLElement;
   if (target.closest("button, input, textarea, a, select, [role='button'], .no-drag")) {
     return;
   }
-  toggleMaximize();
+  await toggleMaximize();
 }
 
 function navigateFromProfile(view: NavView) {
@@ -86,16 +91,28 @@ function navigateFromProfile(view: NavView) {
   emit("navigate", view);
 }
 
-function minimize() {
-  invoke("minimize_window").catch(console.error);
+async function minimize() {
+  try {
+    await appWindow.minimize();
+  } catch {
+    invoke("minimize_window").catch(console.error);
+  }
 }
 
-function toggleMaximize() {
-  invoke("toggle_maximize_window").catch(console.error);
+async function toggleMaximize() {
+  try {
+    await appWindow.toggleMaximize();
+  } catch {
+    invoke("toggle_maximize_window").catch(console.error);
+  }
 }
 
-function closeWindow() {
-  invoke("close_window").catch(console.error);
+async function closeWindow() {
+  try {
+    await appWindow.close();
+  } catch {
+    invoke("close_window").catch(console.error);
+  }
 }
 
 function openSettings() {
@@ -108,10 +125,10 @@ function openSettings() {
     @mousedown="startDrag"
     @dblclick="handleHeaderDblClick"
     data-tauri-drag-region
-    class="h-12 w-full flex items-center justify-between px-5 select-none border-b border-white/[0.08] bg-[#10110f] z-40 relative cursor-default"
+    class="h-12 w-full flex items-center px-5 select-none border-b border-white/[0.08] bg-[#10110f] z-40 relative cursor-default"
   >
     <!-- Left: Navigation Arrows & API Badge -->
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3 flex-shrink-0">
       <div class="flex items-center gap-2 text-sm text-[#8d9188] select-none font-mono">
         <button
           @click="emit('navigate', 'discover')"
@@ -145,12 +162,21 @@ function openSettings() {
       </button>
     </div>
 
+    <!-- Draggable Area Left of Search -->
+    <div
+      data-tauri-drag-region
+      @mousedown="startDrag"
+      class="flex-1 h-full min-w-[20px] cursor-default"
+    ></div>
+
     <!-- Center: Search Input Bar -->
-    <div class="relative w-72">
+    <div data-tauri-drag-region class="relative w-72 flex-shrink-0">
       <div
+        data-tauri-drag-region
+        @mousedown="startDrag"
         class="flex items-center gap-2 px-3 py-1.5 rounded-[10px] bg-[#171916] border border-white/[0.08] hover:border-white/[0.16] focus-within:border-[#d6f379]/60 transition-all text-xs"
       >
-        <span class="text-[#8d9188] text-xs font-mono">⌕</span>
+        <span data-tauri-drag-region class="text-[#8d9188] text-xs font-mono">⌕</span>
         <input
           v-model="searchQuery"
           @keydown.enter="handleSearch()"
@@ -199,8 +225,15 @@ function openSettings() {
       </div>
     </div>
 
+    <!-- Draggable Area Right of Search -->
+    <div
+      data-tauri-drag-region
+      @mousedown="startDrag"
+      class="flex-1 h-full min-w-[20px] cursor-default"
+    ></div>
+
     <!-- Right: User Avatar & Settings & Window Controls -->
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-2 flex-shrink-0">
       <!-- User Avatar / Login Button -->
       <div class="relative">
         <button

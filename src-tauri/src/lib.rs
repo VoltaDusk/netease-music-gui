@@ -31,8 +31,8 @@ fn close_window(window: Window) {
 }
 
 #[tauri::command]
-fn drag_window(window: Window) {
-    let _ = window.start_dragging();
+fn drag_window(window: Window) -> Result<(), String> {
+    window.start_dragging().map_err(|e| e.to_string())
 }
 
 #[tauri::command]
