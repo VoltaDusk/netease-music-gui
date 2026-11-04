@@ -1,4 +1,4 @@
-# 🎵 雾岛 FM · 网易云音乐 Rust 桌面客户端 (v0.1.0)
+# 🎵 雾岛 FM · NCM桌面客户端
 
 <p align="center">
   <img src="https://img.shields.io/badge/Rust-1.80+-dea584.svg?style=flat-square&logo=rust" alt="Rust" />
@@ -9,25 +9,18 @@
 </p>
 
 一款追求**极简设计、轻盈体验与纯粹听觉享受**的网易云音乐第三方桌面客户端。  
-采用 **Rust + Tauri v2 + Vue 3 + Tailwind CSS v4** 现代原生技术栈构建，内置官方原生 EAPI 直连引擎，**无需安装任何 Node.js 服务或配置端口，双击打开即用**。
+
 
 ---
 
 ## ✨ 核心特性
 
-- 🚀 **免外部服务 · 开箱即用**
-  - **内置原生直连引擎**：客户端底层采用 Rust 原生 `reqwest` 异步网络栈结合网易官方 PC 客户端 EAPI 协议（AES-128-ECB 签名与 MD5 校验），直接与网易云官方服务器通信。
-  - **零外部依赖**：彻底告别原本必须常驻的 Node.js `api-enhanced` 服务，杜绝 3000 端口占用冲突与浏览器 WebView2 CORS 跨域限制。
-  - **双模式容灾**：默认开启「内置原生直连」，并在设置中支持配置「自定义远程 API」，随时灵活切换。
 
 - ⚡ **极致轻量与极低资源消耗**
   - 单文件可执行程序打包后仅 **~5.0MB**（传统 Electron 客户端体积普遍超过 150MB+）。
   - 运行时内存占用仅约 **30 ~ 50MB**，冷启动瞬时完成，低功耗、不卡顿。
 
-- 🎨 **双主题极简美学设计**
-  - **黑曜石·抹茶 (Obsidian & Matcha)**：沉浸暗色基底配合低饱和抹茶绿点缀，营造深夜录音室级的专注质感。
-  - **和纸·晨露 (Washi Paper)**：温润典雅的浅色纸纹触感与清新晨露茶绿，白天办公阅读轻盈不刺眼。
-  - 支持在设置界面一键丝滑切换。
+
 
 - 🎚️ **动态音质自由切换**
   - 底部控制栏提供多档位音质规格菜单：
@@ -42,14 +35,11 @@
   - **红心歌单双向同步**：登录后自动获取「我喜欢的音乐」全量云端列表，随时随地点击红心秒级双向同步。
   - **个人歌单展示**：完整列出用户创建与收藏的个人歌单，支持无限畅听。
 
-- 🔍 **全网智能搜索与发现**
-  - 支持单曲、歌单双模态搜索。
-  - 提供实时全网热门搜索词建议。
-  - 自动解析曲目原图封面与默认 Braun 唱机矢量占位图。
+
 
 ---
 
-## 📥 普通用户下载使用
+## 📥 下载使用
 
 1. 前往 GitHub [Releases](https://github.com/VoltaDusk/netease-music-gui/releases) 页面下载最新发布的打包文件，或直接获取编译好的 `CloudMusic-Rust.exe`。
 2. 双击运行即可，**无需配置环境、无需开启命令终端**。
@@ -87,34 +77,15 @@ pnpm tauri build --no-bundle
 
 ---
 
-## ⚙️ 架构概览
-
-```
-netease-music-gui/
-├── src/                          # 前端 Vue 3 + Tailwind v4 界面层
-│   ├── components/               # 界面模块 (PlayerBar, Sidebar, SettingsModal 等)
-│   ├── services/
-│   │   └── api.ts                # 网易官方 EAPI 逆向加密算法与请求分发引擎
-│   ├── store/                    # 响应式状态管理 (播放器、用户信息、主题模式)
-│   └── types/                    # 全局 TypeScript 接口规范
-├── src-tauri/                    # Rust Tauri 桌面后端引擎
-│   ├── src/
-│   │   ├── lib.rs                # 原生 HTTP 跨域代理与窗口控制 IPC Command
-│   │   └── main.rs               # 应用程序入口
-│   └── Cargo.toml                # Rust 依赖声明 (tauri, reqwest, serde)
-└── package.json                  # 前端依赖配置
-```
-
----
 
 ## 🙏 致谢与灵感来源 (Acknowledgments)
 
-本项目在内置官方 EAPI 逆向协议实现及自定义远程服务兼容时，参考了开源社区优秀的逆向成果：
 
-- [NeteaseCloudMusicApiEnhanced/api-enhanced](https://github.com/NeteaseCloudMusicApiEnhanced/api-enhanced)：提供了现代化的接口规范扩展参考，本项目设置界面的「自定义远程服务」全面兼容该规范。
-- [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)：网易云音乐开源 API 逆向研究的基石项目。
 
-在此对开源社区各位开发者的无私探索与奉献致以诚挚敬意！
+- [NeteaseCloudMusicApiEnhanced/api-enhanced](https://github.com/NeteaseCloudMusicApiEnhanced/api-enhanced)
+- [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
+
+
 
 ---
 
@@ -124,6 +95,3 @@ netease-music-gui/
 2. 音乐数据、音频流媒体、歌词与封面图所有权均归网易云音乐（NetEase Cloud Music）及相关版权方所有。
 3. 请在法律法规允许的范围内合理使用，建议支持网易云音乐官方正版服务。
 
-## 📜 许可证
-
-本项目基于 [MIT 许可证](LICENSE) 开源。
