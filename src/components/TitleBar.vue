@@ -138,10 +138,10 @@ function openSettings() {
             ? 'bg-[#1b2318] text-[#d6f379] border border-[#d6f379]/30 hover:bg-[#222d1e]'
             : 'bg-[#1e1c16] text-[#e0bb78] border border-[#e0bb78]/30 hover:bg-[#28251c]'
         "
-        :title="isConnected ? 'API 接口已连通 (3000端口)' : '未检测到本地 API 服务，已启用内置体验数据模式，点击设置'"
+        :title="isConnected ? '原生 API 在线 (网易云原生 EAPI 直连，开箱即用)' : '离线体验模式 (点击配置或诊断网络)'"
       >
         <span class="w-1.5 h-1.5 rounded-full" :class="isConnected ? 'bg-[#d6f379]' : 'bg-[#e0bb78]'"></span>
-        <span>{{ isConnected ? "API 在线" : "体验模式" }}</span>
+        <span>{{ isConnected ? "原生 API 在线" : "体验模式" }}</span>
       </button>
     </div>
 

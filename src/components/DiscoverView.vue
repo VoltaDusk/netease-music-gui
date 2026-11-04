@@ -114,12 +114,6 @@ function handleImgError(e: Event) {
             <span>▶</span>
             <span>开始聆听</span>
           </button>
-          <button
-            @click="emit('view-all-playlists')"
-            class="px-4 py-2.5 rounded-[9px] bg-white/[0.1] hover:bg-white/[0.15] text-[#eee] text-xs font-medium transition-all active:scale-95 border border-white/[0.06]"
-          >
-            全部歌单
-          </button>
         </div>
       </div>
 
