@@ -5,6 +5,52 @@ import { userState } from "./user";
 
 const audio = new Audio();
 audio.preload = "auto";
+audio.crossOrigin = "anonymous";
+
+// Web Audio API Context & Analyser (True Real-Time Frequency Analysis)
+let audioContext: AudioContext | null = null;
+let analyserNode: AnalyserNode | null = null;
+let sourceNode: MediaElementAudioSourceNode | null = null;
+let isAudioConnected = false;
+
+export function getAudioAnalyser(): AnalyserNode | null {
+  if (isAudioConnected && analyserNode) {
+    if (audioContext && audioContext.state === "suspended") {
+      audioContext.resume().catch(() => {});
+    }
+    return analyserNode;
+  }
+
+  try {
+    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioCtx) return null;
+
+    if (!audioContext) {
+      audioContext = new AudioCtx();
+    }
+    if (audioContext.state === "suspended") {
+      audioContext.resume().catch(() => {});
+    }
+
+    if (!analyserNode) {
+      analyserNode = audioContext.createAnalyser();
+      analyserNode.fftSize = 256; // 128 frequency bins
+      analyserNode.smoothingTimeConstant = 0.76;
+    }
+
+    if (!sourceNode && audio) {
+      sourceNode = audioContext.createMediaElementSource(audio);
+      sourceNode.connect(analyserNode);
+      analyserNode.connect(audioContext.destination);
+      isAudioConnected = true;
+    }
+
+    return analyserNode;
+  } catch (err) {
+    console.warn("[WebAudio] Failed to initialize AudioContext:", err);
+    return null;
+  }
+}
 
 const STORAGE_KEY_LIKED = "cloudmusic_liked_ids";
 const STORAGE_KEY_LIKED_SONGS = "cloudmusic_liked_songs_cache";
@@ -142,6 +188,7 @@ audio.addEventListener("ended", () => {
 
 audio.addEventListener("play", () => {
   playerState.isPlaying = true;
+  getAudioAnalyser();
 });
 
 audio.addEventListener("pause", () => {
@@ -171,6 +218,7 @@ function updateLyricIndex(time: number) {
 
 export const playerActions = {
   async playSong(song: Song, newPlaylist?: Song[]) {
+    getAudioAnalyser();
     song = sanitizeSongCover(song);
     if (newPlaylist && newPlaylist.length > 0) {
       playerState.playlist = newPlaylist.map(sanitizeSongCover);
@@ -275,6 +323,7 @@ export const playerActions = {
   },
 
   togglePlay() {
+    getAudioAnalyser();
     if (!playerState.currentSong) {
       if (playerState.playlist.length > 0) {
         this.playSong(playerState.playlist[0]);

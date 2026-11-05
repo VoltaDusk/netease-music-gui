@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, nextTick } from "vue";
-import { ChevronDown, Heart, Music } from "lucide-vue-next";
+import { ChevronDown, Heart, Music, Play, Pause } from "lucide-vue-next";
 import { playerState, playerActions } from "../store/player";
 import { DEFAULT_COVER_URL } from "../services/api";
 import AudioSpectrum from "./AudioSpectrum.vue";
@@ -138,6 +138,22 @@ watch(
                 <div class="absolute w-5 h-5 rounded-full bg-[#10110f] border-2 border-[#333544]"></div>
               </div>
             </div>
+
+            <!-- Center Play/Pause Control Button (Fixed upright, does not spin with vinyl) -->
+            <button
+              @click.stop="playerActions.togglePlay()"
+              class="vinyl-center-play-btn absolute z-30 w-13 h-13 rounded-full flex items-center justify-center bg-black/55 hover:bg-black/75 active:scale-90 backdrop-blur-md border border-white/25 text-[#f1f0e9] shadow-[0_8px_24px_rgba(0,0,0,0.65)] transition-all duration-200 cursor-pointer group"
+              :title="playerState.isPlaying ? '点击暂停' : '点击播放'"
+            >
+              <Pause
+                v-if="playerState.isPlaying"
+                class="w-6 h-6 text-[#d6f379] fill-[#d6f379] group-hover:scale-110 transition-transform"
+              />
+              <Play
+                v-else
+                class="w-6 h-6 text-[#d6f379] fill-[#d6f379] ml-0.5 group-hover:scale-110 transition-transform"
+              />
+            </button>
           </div>
         </div>
 

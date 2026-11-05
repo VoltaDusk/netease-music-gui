@@ -565,3 +565,17 @@ html.light .vinyl-player-root .lyric-trans-inactive {
   color: #646e5a !important;
   opacity: 0.7 !important;
 }
+
+/* Vinyl Center Play/Pause Control Button in Light Theme */
+html.light .vinyl-center-play-btn {
+  background-color: rgba(255, 255, 255, 0.88) !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+}
+html.light .vinyl-center-play-btn:hover {
+  background-color: #ffffff !important;
+}
+html.light .vinyl-center-play-btn svg {
+  color: #385a12 !important;
+  fill: #385a12 !important;
+}

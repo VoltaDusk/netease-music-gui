@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, watch } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import { Activity, Sparkles, Waves, BarChart2 } from "lucide-vue-next";
-import { playerState } from "../store/player";
+import { playerState, getAudioAnalyser } from "../store/player";
 
 type SpectrumMode = "bars" | "wave" | "mirror";
 
@@ -31,6 +31,17 @@ const BAR_COUNT = 64;
 const barHeights = new Float32Array(BAR_COUNT);
 const peakHeights = new Float32Array(BAR_COUNT);
 const peakDrops = new Float32Array(BAR_COUNT);
+
+// Logarithmic bin index mapping for 64 bars over 128 FFT frequency bins
+// Spreads sub-bass, kick, vocals, mids, and treble across the spectrum naturally
+const binIndices = new Int32Array(BAR_COUNT);
+for (let i = 0; i < BAR_COUNT; i++) {
+  const norm = i / (BAR_COUNT - 1);
+  binIndices[i] = Math.min(126, Math.floor(Math.pow(norm, 1.55) * 115));
+}
+
+// FFT Frequency Buffer
+const rawFreqData = new Uint8Array(128);
 
 // Multi-color palette interpolation (Lime -> Cyan -> Blue -> Purple -> Pink -> Amber)
 const COLOR_STOPS = [
@@ -67,85 +78,85 @@ function getVibrantColor(ratio: number, alpha = 1): string {
 let cssWidth = 0;
 let cssHeight = 0;
 
-// Dynamic physical audio simulation
+// Dynamic physical audio simulation fallback
 let simTime = 0;
 let lastTimestamp = performance.now();
-let lyricEnergy = 0;
-
-watch(
-  () => playerState.currentLyricIndex,
-  () => {
-    // Vocal shift pulse
-    lyricEnergy = 0.45;
-  }
-);
 
 function updatePhysics(dt: number) {
   const isPlaying = playerState.isPlaying;
   const vol = playerState.isMuted ? 0 : playerState.volume || 0.8;
-  const cTime = playerState.currentTime;
 
-  if (isPlaying) {
-    simTime += dt * 0.0035;
-  } else {
-    simTime += dt * 0.0006; // Gentle breathing drift when paused
-  }
+  // Attempt to read real audio frequency data from Web Audio API AnalyserNode
+  const analyser = getAudioAnalyser();
+  let hasRealAudio = false;
 
-  if (lyricEnergy > 0) {
-    lyricEnergy = Math.max(0, lyricEnergy - dt * 0.001);
-  }
-
-  // Musical rhythmic pulses
-  const tempoBeat = Math.pow(Math.max(0, Math.sin(simTime * 2.8 + (cTime % 2) * 1.5)), 5);
-  const kickPulse = Math.pow(Math.max(0, Math.sin(simTime * 1.4)), 6);
-  const subBass = Math.pow(Math.max(0, Math.sin(simTime * 0.95)), 4);
-
-  for (let i = 0; i < BAR_COUNT; i++) {
-    const normIdx = i / (BAR_COUNT - 1); // 0 to 1
-    let target = 0;
-
-    if (isPlaying && vol > 0) {
-      // 1. Low frequency power (bars 0-18): Sub-bass & Bass kick
-      const bassWeight = Math.max(0, 1 - normIdx * 2.1);
-      const bassComponent = (subBass * 0.65 + kickPulse * 0.85 + tempoBeat * 0.5) * bassWeight;
-
-      // 2. Mid frequency vocal/melody waves (bars 15-45)
-      const midWave = Math.sin(simTime * 4.2 + normIdx * 9.5) * 0.35 + 0.35;
-      const vocalHarmonics = Math.sin(simTime * 7.0 + normIdx * 14.0) * 0.2 + 0.2;
-      const midWeight = Math.sin(normIdx * Math.PI) * (0.8 + lyricEnergy * 0.5);
-      const midComponent = (midWave + vocalHarmonics) * midWeight;
-
-      // 3. High frequency shimmer & percussion (bars 35-63)
-      const highWave = Math.sin(simTime * 9.5 + normIdx * 18.0) * 0.22 + 0.22;
-      const shimmer = Math.sin(simTime * 18.0 + i * 2.5) * 0.18;
-      const highWeight = Math.pow(normIdx, 0.85);
-      const highComponent = (highWave + shimmer) * highWeight;
-
-      // Natural acoustic curve (pink noise falloff)
-      const acousticCurve = Math.pow(1 - normIdx * 0.3, 1.15);
-      const combined = (bassComponent + midComponent + highComponent) * acousticCurve;
-
-      target = Math.max(0.04, Math.min(0.95, combined * vol * 1.1));
-    } else {
-      // Idle tranquil undulating calm wave
-      const idleWave = Math.sin(simTime * 2.0 + normIdx * 4.0) * 0.02 + 0.025;
-      target = idleWave;
+  if (analyser && isPlaying && vol > 0) {
+    analyser.getByteFrequencyData(rawFreqData);
+    // Verify if there is non-zero acoustic energy
+    for (let j = 0; j < 128; j++) {
+      if (rawFreqData[j] > 0) {
+        hasRealAudio = true;
+        break;
+      }
     }
+  }
 
-    // Dynamic smoothing response (fast attack, smooth natural decay)
-    const current = barHeights[i];
-    const attackSpeed = 0.35;
-    const releaseSpeed = 0.14;
-    const speed = target > current ? attackSpeed : releaseSpeed;
-    barHeights[i] += (target - current) * speed;
+  if (hasRealAudio) {
+    // 100% Real Audio Frequency Analysis (真实时音频高低音分析)
+    for (let i = 0; i < BAR_COUNT; i++) {
+      const bin = binIndices[i];
+      const valA = rawFreqData[bin] || 0;
+      const valB = bin < 127 ? (rawFreqData[bin + 1] || 0) : valA;
+      const rawVal = valA * 0.7 + valB * 0.3;
 
-    // Peak holding & gravity falloff
-    if (barHeights[i] >= peakHeights[i]) {
-      peakHeights[i] = barHeights[i];
-      peakDrops[i] = 0;
+      const norm = i / (BAR_COUNT - 1);
+      // Frequency acoustic equal-loudness boost (compensating for human hearing and natural pink-noise mix rolloff)
+      // Bass gets solid punch, mids get rich presence, highs get crystal-clear shimmer
+      const boost = 1.15 + Math.pow(norm, 0.85) * 2.35;
+      const perceived = Math.pow(rawVal / 255.0, 0.82) * boost;
+      const target = Math.max(0.03, Math.min(1.0, perceived * vol * 1.12));
+
+      // Snappy attack, smooth natural decay
+      const current = barHeights[i];
+      const speed = target > current ? 0.48 : 0.18;
+      barHeights[i] += (target - current) * speed;
+
+      // Peak holding & gravity falloff
+      if (barHeights[i] >= peakHeights[i]) {
+        peakHeights[i] = barHeights[i];
+        peakDrops[i] = 0;
+      } else {
+        peakDrops[i] += 0.0028 * (dt / 16);
+        peakHeights[i] = Math.max(barHeights[i], peakHeights[i] - peakDrops[i]);
+      }
+    }
+  } else {
+    // Fallback if audio context is buffering or paused
+    if (isPlaying && vol > 0) {
+      simTime += dt * 0.004;
+      const kick = Math.pow(Math.max(0, Math.sin(simTime * 2.6)), 5);
+      const mid = Math.sin(simTime * 4.2) * 0.3 + 0.3;
+
+      for (let i = 0; i < BAR_COUNT; i++) {
+        const norm = i / (BAR_COUNT - 1);
+        const bTarget = Math.max(0.04, (kick * (1 - norm) + mid * Math.sin(norm * Math.PI)) * vol * 0.6);
+        const current = barHeights[i];
+        barHeights[i] += (bTarget - current) * 0.25;
+
+        if (barHeights[i] >= peakHeights[i]) {
+          peakHeights[i] = barHeights[i];
+          peakDrops[i] = 0;
+        } else {
+          peakDrops[i] += 0.002 * (dt / 16);
+          peakHeights[i] = Math.max(barHeights[i], peakHeights[i] - peakDrops[i]);
+        }
+      }
     } else {
-      peakDrops[i] += 0.0016 * (dt / 16);
-      peakHeights[i] = Math.max(barHeights[i], peakHeights[i] - peakDrops[i]);
+      // Paused state: Smoothly collapse to a quiet 2px baseline
+      for (let i = 0; i < BAR_COUNT; i++) {
+        barHeights[i] += (0.02 - barHeights[i]) * 0.12;
+        peakHeights[i] += (0.02 - peakHeights[i]) * 0.12;
+      }
     }
   }
 }
@@ -200,19 +211,18 @@ function drawRoundRect(
     ctx.fill();
     return;
   }
-  // Fallback to standard rect
   ctx.fillRect(x, y, w, h);
 }
 
-// Mode 1: 炫彩柱状 (Spectrum Bars with Floating Peak Caps & Glass Reflection)
+// Mode 1: 炫彩柱状 (High-Impact Spectrum Bars with Peak Caps & Reflection)
 function renderBars(
   ctx: CanvasRenderingContext2D,
   width: number,
   height: number,
   isLight: boolean
 ) {
-  const baseMarginBottom = 14;
-  const maxBarHeight = height - baseMarginBottom - 16;
+  const baseMarginBottom = 16;
+  const maxBarHeight = height - baseMarginBottom - 16; // Up to 80px high
   const barGap = 3.5;
   const totalGap = (BAR_COUNT - 1) * barGap;
   const barWidth = Math.max(3, (width - 48 - totalGap) / BAR_COUNT);
@@ -222,20 +232,20 @@ function renderBars(
   for (let i = 0; i < BAR_COUNT; i++) {
     const x = startX + i * (barWidth + barGap);
     const ratio = i / (BAR_COUNT - 1);
-    const bHeight = Math.max(2.5, barHeights[i] * maxBarHeight);
+    const bHeight = Math.max(3, barHeights[i] * maxBarHeight);
     const y = baselineY - bHeight;
 
     // Main vibrant gradient for this frequency column
     const barGradient = ctx.createLinearGradient(0, baselineY, 0, y);
-    const baseColor = getVibrantColor(ratio, isLight ? 0.75 : 0.85);
+    const baseColor = getVibrantColor(ratio, isLight ? 0.8 : 0.88);
     const peakColor = getVibrantColor(Math.min(1, ratio + 0.12), 1);
     barGradient.addColorStop(0, baseColor);
     barGradient.addColorStop(1, peakColor);
 
     ctx.save();
     // Ambient glow halo
-    ctx.shadowBlur = isLight ? 6 : 10;
-    ctx.shadowColor = getVibrantColor(ratio, isLight ? 0.35 : 0.65);
+    ctx.shadowBlur = isLight ? 6 : 12;
+    ctx.shadowColor = getVibrantColor(ratio, isLight ? 0.35 : 0.7);
 
     // Draw main bar with rounded top
     ctx.fillStyle = barGradient;
@@ -244,16 +254,16 @@ function renderBars(
 
     // Floating Peak Cap (High-Fi style)
     const peakH = peakHeights[i] * maxBarHeight;
-    const peakY = Math.max(2, baselineY - peakH - 3.5);
+    const peakY = Math.max(3, baselineY - peakH - 4);
     ctx.fillStyle = isLight ? "#1a1d17" : "#ffffff";
-    ctx.shadowBlur = isLight ? 2 : 5;
-    ctx.shadowColor = isLight ? "rgba(0,0,0,0.25)" : "#ffffff";
-    drawRoundRect(ctx, x, peakY, barWidth, 2, [1, 1, 1, 1]);
+    ctx.shadowBlur = isLight ? 3 : 6;
+    ctx.shadowColor = isLight ? "rgba(0,0,0,0.3)" : "#ffffff";
+    drawRoundRect(ctx, x, peakY, barWidth, 2.5, [1, 1, 1, 1]);
 
-    // Subtle Glass Floor Inverted Reflection
+    // Glass Floor Inverted Reflection
     const reflectH = bHeight * 0.28;
     const reflectGrad = ctx.createLinearGradient(0, baselineY, 0, baselineY + reflectH);
-    reflectGrad.addColorStop(0, getVibrantColor(ratio, isLight ? 0.25 : 0.35));
+    reflectGrad.addColorStop(0, getVibrantColor(ratio, isLight ? 0.28 : 0.38));
     reflectGrad.addColorStop(1, getVibrantColor(ratio, 0));
     ctx.fillStyle = reflectGrad;
     drawRoundRect(ctx, x, baselineY + 1, barWidth, reflectH, [0, 0, r, r]);
@@ -269,11 +279,11 @@ function renderWaves(
   height: number,
   isLight: boolean
 ) {
-  const baselineY = height - 10;
+  const baselineY = height - 12;
   const layers = [
-    { colorA: "#10b981", colorB: "#06b6d4", speed: 1.0, amp: 0.9, alpha: isLight ? 0.45 : 0.4 },
-    { colorA: "#3b82f6", colorB: "#8b5cf6", speed: 1.3, amp: 0.75, alpha: isLight ? 0.4 : 0.35 },
-    { colorA: "#ec4899", colorB: "#f59e0b", speed: 0.8, amp: 0.6, alpha: isLight ? 0.35 : 0.3 },
+    { colorA: "#10b981", colorB: "#06b6d4", speed: 1.0, amp: 1.0, alpha: isLight ? 0.48 : 0.45 },
+    { colorA: "#3b82f6", colorB: "#8b5cf6", speed: 1.3, amp: 0.85, alpha: isLight ? 0.42 : 0.4 },
+    { colorA: "#ec4899", colorB: "#f59e0b", speed: 0.8, amp: 0.7, alpha: isLight ? 0.38 : 0.35 },
   ];
 
   layers.forEach((layer, layerIdx) => {
@@ -284,7 +294,7 @@ function renderWaves(
 
     ctx.fillStyle = waveGrad;
     ctx.globalAlpha = layer.alpha;
-    ctx.shadowBlur = isLight ? 8 : 16;
+    ctx.shadowBlur = isLight ? 8 : 18;
     ctx.shadowColor = layer.colorB;
 
     ctx.beginPath();
@@ -294,7 +304,7 @@ function renderWaves(
     for (let i = 0; i < BAR_COUNT; i++) {
       const x = i * step;
       const idxOffset = (i + layerIdx * 8) % BAR_COUNT;
-      const h = barHeights[idxOffset] * (height - 20) * layer.amp;
+      const h = barHeights[idxOffset] * (height - 24) * layer.amp;
       const y = baselineY - h;
 
       if (i === 0) {
@@ -302,7 +312,7 @@ function renderWaves(
       } else {
         const prevX = (i - 1) * step;
         const prevIdx = (i - 1 + layerIdx * 8) % BAR_COUNT;
-        const prevY = baselineY - barHeights[prevIdx] * (height - 20) * layer.amp;
+        const prevY = baselineY - barHeights[prevIdx] * (height - 24) * layer.amp;
         const cX = (prevX + x) / 2;
         const cY = (prevY + y) / 2;
         ctx.quadraticCurveTo(prevX, prevY, cX, cY);
@@ -316,7 +326,7 @@ function renderWaves(
   });
 }
 
-// Mode 3: 镜像律动 (Symmetrical Dual-Sided Equalizer)
+// Mode 3: 对称律动 (High-Impact Mirrored Dual-Sided Equalizer)
 function renderMirror(
   ctx: CanvasRenderingContext2D,
   width: number,
@@ -328,25 +338,38 @@ function renderMirror(
   const totalGap = (BAR_COUNT - 1) * barGap;
   const barWidth = Math.max(3, (width - 48 - totalGap) / BAR_COUNT);
   const startX = (width - (BAR_COUNT * barWidth + totalGap)) / 2;
+  const maxHalfH = centerY - 8; // Expands up to 48px each direction (total 96px!)
 
   for (let i = 0; i < BAR_COUNT; i++) {
     const x = startX + i * (barWidth + barGap);
     const ratio = i / (BAR_COUNT - 1);
-    const halfH = Math.max(2, (barHeights[i] * (height - 18)) / 2);
+    const halfH = Math.max(3, barHeights[i] * maxHalfH);
 
     const grad = ctx.createLinearGradient(0, centerY - halfH, 0, centerY + halfH);
     grad.addColorStop(0, getVibrantColor(ratio, 1));
-    grad.addColorStop(0.5, getVibrantColor(Math.min(1, ratio + 0.1), 0.7));
+    grad.addColorStop(0.5, getVibrantColor(Math.min(1, ratio + 0.1), 0.75));
     grad.addColorStop(1, getVibrantColor(ratio, 1));
 
     ctx.save();
-    ctx.shadowBlur = isLight ? 4 : 8;
-    ctx.shadowColor = getVibrantColor(ratio, 0.4);
+    ctx.shadowBlur = isLight ? 6 : 10;
+    ctx.shadowColor = getVibrantColor(ratio, 0.5);
     ctx.fillStyle = grad;
 
     const r = Math.min(barWidth / 2, 2.5);
+    // Draw mirrored bar
     drawRoundRect(ctx, x, centerY - halfH, barWidth, halfH * 2, [r, r, r, r]);
-    ctx.fill();
+
+    // Floating Peak Cap (Top)
+    const topPeakY = centerY - peakHeights[i] * maxHalfH - 3.5;
+    ctx.fillStyle = isLight ? "#1a1d17" : "#ffffff";
+    ctx.shadowBlur = isLight ? 2 : 5;
+    ctx.shadowColor = isLight ? "rgba(0,0,0,0.25)" : "#ffffff";
+    drawRoundRect(ctx, x, topPeakY, barWidth, 2, [1, 1, 1, 1]);
+
+    // Floating Peak Cap (Bottom)
+    const bottomPeakY = centerY + peakHeights[i] * maxHalfH + 1.5;
+    drawRoundRect(ctx, x, bottomPeakY, barWidth, 2, [1, 1, 1, 1]);
+
     ctx.restore();
   }
 }
@@ -382,18 +405,18 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="spectrum-container relative w-full h-20 flex items-end justify-center select-none overflow-hidden">
+  <div class="spectrum-container relative w-full h-28 flex items-end justify-center select-none overflow-hidden">
     <!-- Visualizer Canvas -->
     <canvas ref="canvasRef" class="w-full h-full block pointer-events-none"></canvas>
 
     <!-- Spectrum Mode Switcher & Indicator -->
-    <div class="absolute bottom-1 right-6 z-20 flex items-center gap-2 pointer-events-auto">
+    <div class="absolute bottom-2 right-6 z-20 flex items-center gap-2 pointer-events-auto">
       <button
         @click="toggleMode"
-        class="spectrum-toggle-btn flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/[0.06] hover:bg-white/[0.14] text-[#a8aca3] hover:text-[#f1f0e9] border border-white/[0.08] backdrop-blur-md transition-all text-[11px] shadow-sm active:scale-95 cursor-pointer"
+        class="spectrum-toggle-btn flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.08] hover:bg-white/[0.16] text-[#c4c8be] hover:text-[#f1f0e9] border border-white/[0.1] backdrop-blur-md transition-all text-[11px] shadow-sm active:scale-95 cursor-pointer"
         :title="`当前频谱模式：${modeList.find(m => m.key === currentMode)?.label}（点击切换）`"
       >
-        <Sparkles class="w-3 h-3 text-[#d6f379] animate-pulse" />
+        <Sparkles class="w-3.5 h-3.5 text-[#d6f379] animate-pulse" />
         <span class="tracking-wide">{{ modeList.find((m) => m.key === currentMode)?.label }}</span>
       </button>
     </div>
@@ -402,18 +425,18 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .spectrum-container {
-  mask-image: linear-gradient(to right, transparent, black 3%, black 97%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, black 3%, black 97%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 2.5%, black 97.5%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 2.5%, black 97.5%, transparent);
 }
 
 :global(html.light) .spectrum-toggle-btn {
-  background-color: rgba(0, 0, 0, 0.05);
-  border-color: rgba(0, 0, 0, 0.08);
-  color: #555950;
+  background-color: rgba(0, 0, 0, 0.06);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #3b4233;
 }
 
 :global(html.light) .spectrum-toggle-btn:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-  color: #1a1d17;
+  background-color: rgba(0, 0, 0, 0.12);
+  color: #12160e;
 }
 </style>
