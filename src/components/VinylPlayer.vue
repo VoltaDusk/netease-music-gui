@@ -3,6 +3,7 @@ import { ref, watch, nextTick } from "vue";
 import { ChevronDown, Heart, Music } from "lucide-vue-next";
 import { playerState, playerActions } from "../store/player";
 import { DEFAULT_COVER_URL } from "../services/api";
+import AudioSpectrum from "./AudioSpectrum.vue";
 
 const lyricsContainer = ref<HTMLElement | null>(null);
 
@@ -85,7 +86,7 @@ watch(
     </header>
 
     <!-- Main Content Area: Turntable on Left, Synced Lyrics on Right -->
-    <main class="flex-1 flex flex-col md:flex-row items-center justify-center px-10 pb-8 gap-12 z-10 overflow-hidden">
+    <main class="flex-1 flex flex-col md:flex-row items-center justify-center px-10 pb-2 gap-12 z-10 overflow-hidden">
       <!-- Left: Turntable with Tonearm and Vinyl Record -->
       <div class="w-full md:w-1/2 flex flex-col items-center justify-center relative">
         <div class="relative w-84 h-84 flex items-center justify-center">
@@ -149,10 +150,10 @@ watch(
       </div>
 
       <!-- Right: Fluid Scrolling Lyrics -->
-      <div class="w-full md:w-1/2 h-[450px] flex flex-col relative">
+      <div class="w-full md:w-1/2 flex-1 max-h-[440px] flex flex-col relative">
         <div
           ref="lyricsContainer"
-          class="flex-1 overflow-y-auto px-4 py-32 space-y-6 scroll-smooth text-center md:text-left"
+          class="flex-1 overflow-y-auto px-4 py-28 space-y-6 scroll-smooth text-center md:text-left"
           style="scrollbar-width: none;"
         >
           <template v-if="playerState.lyrics && playerState.lyrics.length > 0">
@@ -195,5 +196,10 @@ watch(
         </div>
       </div>
     </main>
+
+    <!-- Bottom Dazzling Audio Spectrum Visualizer -->
+    <footer class="w-full z-10 shrink-0 select-none pb-1 pointer-events-none">
+      <AudioSpectrum />
+    </footer>
   </div>
 </template>
