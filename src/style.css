@@ -566,6 +566,21 @@ html.light .vinyl-player-root .lyric-trans-inactive {
   opacity: 0.7 !important;
 }
 
+/* Vinyl Center Play/Pause Control Button - Hover Only Display */
+.vinyl-center-play-btn {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.88);
+  transition: opacity 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.2s ease !important;
+}
+
+.turntable-platter:hover .vinyl-center-play-btn,
+.vinyl-center-play-btn:hover {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: scale(1) !important;
+}
+
 /* Vinyl Center Play/Pause Control Button in Light Theme */
 html.light .vinyl-center-play-btn {
   background-color: rgba(255, 255, 255, 0.88) !important;

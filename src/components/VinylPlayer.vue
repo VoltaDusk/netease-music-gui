@@ -115,7 +115,9 @@ watch(
 
           <!-- Turntable Platter Outer Rim -->
           <div
-            class="turntable-platter w-76 h-76 rounded-full bg-[#171916] border-4 border-[#282b22] flex items-center justify-center shadow-2xl relative"
+            @click="playerActions.togglePlay()"
+            class="turntable-platter group/turntable w-76 h-76 rounded-full bg-[#171916] border-4 border-[#282b22] flex items-center justify-center shadow-2xl relative cursor-pointer select-none"
+            :title="playerState.isPlaying ? '点击暂停' : '点击播放'"
           >
             <!-- Rotating Vinyl Disc -->
             <div
@@ -139,19 +141,19 @@ watch(
               </div>
             </div>
 
-            <!-- Center Play/Pause Control Button (Fixed upright, does not spin with vinyl) -->
+            <!-- Center Play/Pause Control Button (Only visible on hover, fixed upright) -->
             <button
               @click.stop="playerActions.togglePlay()"
-              class="vinyl-center-play-btn absolute z-30 w-13 h-13 rounded-full flex items-center justify-center bg-black/55 hover:bg-black/75 active:scale-90 backdrop-blur-md border border-white/25 text-[#f1f0e9] shadow-[0_8px_24px_rgba(0,0,0,0.65)] transition-all duration-200 cursor-pointer group"
+              class="vinyl-center-play-btn absolute z-30 w-14 h-14 rounded-full flex items-center justify-center bg-black/60 hover:bg-black/80 active:scale-90 backdrop-blur-md border border-white/25 text-[#f1f0e9] shadow-[0_8px_24px_rgba(0,0,0,0.65)] transition-all duration-300 cursor-pointer pointer-events-none group-hover/turntable:pointer-events-auto"
               :title="playerState.isPlaying ? '点击暂停' : '点击播放'"
             >
               <Pause
                 v-if="playerState.isPlaying"
-                class="w-6 h-6 text-[#d6f379] fill-[#d6f379] group-hover:scale-110 transition-transform"
+                class="w-6 h-6 text-[#d6f379] fill-[#d6f379] hover:scale-110 transition-transform"
               />
               <Play
                 v-else
-                class="w-6 h-6 text-[#d6f379] fill-[#d6f379] ml-0.5 group-hover:scale-110 transition-transform"
+                class="w-6 h-6 text-[#d6f379] fill-[#d6f379] ml-0.5 hover:scale-110 transition-transform"
               />
             </button>
           </div>
