@@ -313,12 +313,12 @@ export class ApiService {
   }
 
   // 4. 歌单详情及歌曲列表
-  public async getPlaylistDetail(id: number): Promise<{ playlist: Playlist; tracks: Song[] }> {
+  public async getPlaylistDetail(id: number, limit = 1000): Promise<{ playlist: Playlist; tracks: Song[] }> {
     try {
       const res = await this.request<{
         code: number;
         playlist?: any;
-      }>("/api/v6/playlist/detail", { id, n: 1000, s: 8 });
+      }>("/api/v6/playlist/detail", { id, n: limit, s: 8 });
 
       if (res && res.playlist) {
         const p = res.playlist;

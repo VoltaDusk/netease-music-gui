@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1b1e17" />
+      <stop offset="50%" stop-color="#131510" />
+      <stop offset="100%" stop-color="#0b0d09" />
+    </linearGradient>
+
+    <!-- Metallic Turntable Platter Rim -->
+    <linearGradient id="metalRim4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4a5042" />
+      <stop offset="50%" stop-color="#282b22" />
+      <stop offset="100%" stop-color="#171914" />
+    </linearGradient>
+
+    <!-- Tonearm Metal -->
+    <linearGradient id="armMetal4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="35%" stop-color="#d4d8cc" />
+      <stop offset="100%" stop-color="#727869" />
+    </linearGradient>
+
+    <!-- Center Disc Vinyl Artwork -->
+    <radialGradient id="centerLabel4" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ddc396" />
+      <stop offset="55%" stop-color="#9d795e" />
+      <stop offset="100%" stop-color="#343d32" />
+    </radialGradient>
+
+    <!-- Cartridge Green Accent -->
+    <linearGradient id="cartridgeGrad4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#eafda0" />
+      <stop offset="100%" stop-color="#a0dc35" />
+    </linearGradient>
+
+    <filter id="platterShadow4" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="22" flood-color="#000000" flood-opacity="0.75" />
+    </filter>
+
+    <filter id="needleGlow4" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#d6f379" flood-opacity="0.8" />
+    </filter>
+  </defs>
+
+  <!-- Squircle Base Canvas -->
+  <rect x="24" y="24" width="464" height="464" rx="108" fill="url(#bgGrad4)" stroke="rgba(255, 255, 255, 0.08)" stroke-width="2" />
+
+  <!-- Turntable Platter -->
+  <g filter="url(#platterShadow4)">
+    <!-- Heavy Metal Base Rim -->
+    <circle cx="230" cy="270" r="172" fill="url(#metalRim4)" stroke="rgba(255, 255, 255, 0.12)" stroke-width="3" />
+
+    <!-- Vinyl Disc Body -->
+    <circle cx="230" cy="270" r="162" fill="#141612" />
+
+    <!-- Concentric Grooves -->
+    <g opacity="0.32">
+      <circle cx="230" cy="270" r="150" fill="none" stroke="#383d30" stroke-width="1.2" />
+      <circle cx="230" cy="270" r="136" fill="none" stroke="#fff" stroke-width="1" stroke-dasharray="16 10" />
+      <circle cx="230" cy="270" r="122" fill="none" stroke="#383d30" stroke-width="1.2" />
+      <circle cx="230" cy="270" r="108" fill="none" stroke="#d6f379" stroke-width="1" stroke-opacity="0.6" stroke-dasharray="10 8" />
+      <circle cx="230" cy="270" r="94" fill="none" stroke="#383d30" stroke-width="1.2" />
+      <circle cx="230" cy="270" r="80" fill="none" stroke="#fff" stroke-width="1" stroke-dasharray="8 6" />
+    </g>
+
+    <!-- Vinyl Sheen Highlight Wedges -->
+    <path d="M 230 270 L 120 160 A 162 162 0 0 1 180 120 Z" fill="white" opacity="0.04" />
+    <path d="M 230 270 L 340 380 A 162 162 0 0 1 280 420 Z" fill="white" opacity="0.04" />
+
+    <!-- Center Label Art -->
+    <circle cx="230" cy="270" r="62" fill="url(#centerLabel4)" stroke="#1a1c17" stroke-width="3" />
+    <!-- Center Hole Pin -->
+    <circle cx="230" cy="270" r="12" fill="#0d0f0c" stroke="#5d6354" stroke-width="3" />
+  </g>
+
+  <!-- Precision High-Fidelity Tonearm -->
+  <g>
+    <!-- Base Pivot Pivot Gimbal -->
+    <circle cx="396" cy="116" r="32" fill="#242820" stroke="#484f3e" stroke-width="3" />
+    <circle cx="396" cy="116" r="18" fill="#131610" stroke="#727a67" stroke-width="2" />
+    <circle cx="396" cy="116" r="7" fill="#d6f379" opacity="0.9" />
+
+    <!-- Tonearm Beam (Stylus Rod) -->
+    <path
+      d="M 396 116 L 350 220 L 290 286"
+      fill="none"
+      stroke="url(#armMetal4)"
+      stroke-width="7"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+
+    <!-- Cartridge Head & Needle -->
+    <g transform="translate(290, 286) rotate(32)">
+      <!-- Cartridge Body -->
+      <rect x="-9" y="-2" width="18" height="28" rx="4" fill="#1c2018" stroke="#525a47" stroke-width="1.5" />
+      <!-- Glowing Matcha Stripe -->
+      <rect x="-6" y="14" width="12" height="6" rx="2" fill="url(#cartridgeGrad4)" />
+      <!-- Needle Stylus Light Spark -->
+      <circle cx="0" cy="28" r="4.5" fill="#f4ffd0" filter="url(#needleGlow4)" />
+    </g>
+  </g>
+</svg>

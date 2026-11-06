@@ -8,7 +8,6 @@ import PlaylistView from "./components/PlaylistView.vue";
 import ToplistView from "./components/ToplistView.vue";
 import SearchView from "./components/SearchView.vue";
 import TrackListView from "./components/TrackListView.vue";
-import RightPanel from "./components/RightPanel.vue";
 import VinylPlayer from "./components/VinylPlayer.vue";
 import QueueDrawer from "./components/QueueDrawer.vue";
 import SettingsModal from "./components/SettingsModal.vue";
@@ -24,23 +23,69 @@ const previousView = ref<NavView>("discover");
 const selectedPlaylist = ref<Playlist | null>(null);
 const searchKeyword = ref("");
 
-function navigateTo(view: NavView) {
+// Navigation History Stack
+const navHistory = ref<{ view: NavView; playlist: Playlist | null; search: string }[]>([
+  { view: "discover", playlist: null, search: "" },
+]);
+const historyIndex = ref(0);
+
+const canGoBack = computed(() => historyIndex.value > 0);
+const canGoForward = computed(() => historyIndex.value < navHistory.value.length - 1);
+
+function navigateTo(view: NavView, payload?: { playlist?: Playlist | null; search?: string }) {
+  if (view === currentView.value && !payload?.playlist && !payload?.search) return;
+
   previousView.value = currentView.value;
   currentView.value = view;
+  if (payload?.playlist !== undefined) selectedPlaylist.value = payload.playlist;
+  if (payload?.search !== undefined) searchKeyword.value = payload.search;
+
+  // Truncate forward history and push new entry
+  navHistory.value = navHistory.value.slice(0, historyIndex.value + 1);
+  navHistory.value.push({
+    view,
+    playlist: selectedPlaylist.value,
+    search: searchKeyword.value,
+  });
+  historyIndex.value = navHistory.value.length - 1;
+}
+
+function handleGoBack() {
+  if (canGoBack.value) {
+    historyIndex.value--;
+    const target = navHistory.value[historyIndex.value];
+    previousView.value = currentView.value;
+    currentView.value = target.view;
+    selectedPlaylist.value = target.playlist;
+    searchKeyword.value = target.search;
+  }
+}
+
+function handleGoForward() {
+  if (canGoForward.value) {
+    historyIndex.value++;
+    const target = navHistory.value[historyIndex.value];
+    previousView.value = currentView.value;
+    currentView.value = target.view;
+    selectedPlaylist.value = target.playlist;
+    searchKeyword.value = target.search;
+  }
 }
 
 function handleSelectPlaylist(pl: Playlist) {
-  selectedPlaylist.value = pl;
-  navigateTo("playlist-detail");
+  navigateTo("playlist-detail", { playlist: pl });
 }
 
 function handleBackFromPlaylist() {
-  navigateTo(previousView.value === "playlist-detail" ? "discover" : previousView.value);
+  if (canGoBack.value) {
+    handleGoBack();
+  } else {
+    navigateTo("discover");
+  }
 }
 
 function handleSearch(keyword: string) {
-  searchKeyword.value = keyword;
-  navigateTo("search");
+  navigateTo("search", { search: keyword });
 }
 
 // Compute songs for "Liked" view
@@ -66,6 +111,12 @@ function handleKeyDown(e: KeyboardEvent) {
   if (e.code === "Space") {
     e.preventDefault();
     playerActions.togglePlay();
+  } else if (e.altKey && e.code === "ArrowLeft") {
+    e.preventDefault();
+    handleGoBack();
+  } else if (e.altKey && e.code === "ArrowRight") {
+    e.preventDefault();
+    handleGoForward();
   } else if (e.code === "ArrowLeft") {
     e.preventDefault();
     playerActions.seek(Math.max(0, playerState.currentTime - 5));
@@ -88,7 +139,6 @@ function handleKeyDown(e: KeyboardEvent) {
 
 onMounted(() => {
   window.addEventListener("keydown", handleKeyDown);
-  // 如果已登录，自动在后台同步用户喜爱的音乐和歌单
   if (userState.isLoggedIn && userState.profile?.userId) {
     playerActions.syncLikedFromCloud(userState.profile.userId);
   }
@@ -100,31 +150,27 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="w-screen h-screen flex flex-col bg-[#10110f] text-[#f1f0e9] overflow-hidden select-none">
-    <!-- Top Custom Drag Region Titlebar -->
-    <TitleBar
+  <div class="app-shell w-screen h-screen flex bg-[var(--app-bg)] text-[var(--text-primary)] overflow-hidden select-none">
+    <Sidebar
       :current-view="currentView"
       @navigate="navigateTo"
       @search="handleSearch"
     />
 
-    <!-- Middle 3-Column Layout -->
-    <div class="flex-1 flex overflow-hidden relative">
-      <!-- Left Sidebar (218px) -->
-      <Sidebar
+    <div class="app-workspace flex-1 min-w-0 h-full flex flex-col relative overflow-hidden bg-[var(--app-bg)]">
+      <TitleBar
         :current-view="currentView"
-        @navigate="navigateTo"
+        :can-go-back="canGoBack"
+        :can-go-forward="canGoForward"
+        @go-back="handleGoBack"
+        @go-forward="handleGoForward"
       />
 
-      <!-- Center Main Content Area -->
-      <main class="flex-1 overflow-y-auto bg-[#10110f] relative">
-        <!-- Ambient Subtle Lighting in Top Background -->
-        <div class="absolute top-0 left-1/4 w-96 h-96 bg-[#d6f379]/[0.03] rounded-full filter blur-[120px] pointer-events-none"></div>
-
-        <!-- Dynamic Views -->
+      <main class="app-main flex-1 min-h-0 overflow-y-auto relative bg-[var(--app-bg)]">
         <DiscoverView
           v-if="currentView === 'discover'"
           @select-playlist="handleSelectPlaylist"
+          @view-toplists="navigateTo('toplist')"
         />
 
         <ToplistView
@@ -160,31 +206,19 @@ onUnmounted(() => {
           empty-text="暂无最近播放记录"
         />
 
-        <!-- Default to Discover -->
         <DiscoverView
           v-else
           @select-playlist="handleSelectPlaylist"
-          @view-all-playlists="navigateTo('playlists')"
+          @view-toplists="navigateTo('toplist')"
         />
       </main>
 
-      <!-- Right Column: Queue & Atmosphere Panel (270px) -->
-      <RightPanel class="hidden xl:flex" />
-
-      <!-- Slide-in Queue Drawer (for narrow screens) -->
-      <QueueDrawer class="xl:hidden" />
+      <PlayerBar />
     </div>
 
-    <!-- Bottom Audio Controller (82px) -->
-    <PlayerBar />
-
-    <!-- Fullscreen Immersive Vinyl Player & Synced Lyrics -->
+    <QueueDrawer />
     <VinylPlayer />
-
-    <!-- Settings Modal -->
     <SettingsModal />
-
-    <!-- Login Modal -->
     <LoginModal />
   </div>
 </template>

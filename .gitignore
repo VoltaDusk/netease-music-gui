@@ -7,20 +7,43 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Dependencies
+node_modules/
 
-# Rust & Tauri builds
-src-tauri/target
-src-tauri/gen/schemas
+# Frontend builds
+dist/
+dist-ssr/
+
+# Environment variables & local secrets
+.env
+.env.*
+!.env.example
+*.local
+*.pem
+*.key
+*.cert
+
+# Rust & Tauri builds & binaries
+src-tauri/target/
+target/
+src-tauri/gen/schemas/
+*.exe
+*.msi
+*.dll
+*.pdb
+
+# Local cache & temporary files
+.cache/
+*.tmp
+*.temp
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
+Thumbs.db
+Desktop.ini
 *.suo
 *.ntvs*
 *.njsproj

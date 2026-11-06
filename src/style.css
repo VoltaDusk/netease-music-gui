@@ -2,63 +2,113 @@
 
 @layer base {
   :root {
-    --bg: #10110f;
-    --bg-sidebar: #141612;
-    --bg-card: #171916;
-    --bg-hover: #1b1e19;
-    --bg-active: #23261f;
-    --line: rgba(255, 255, 255, 0.08);
-    --text: #f5f5f0;
-    --muted: #a3a89e;
-    --lime: #d6f379;
-    --lime-hover: #e4f796;
-    --brand-red: #ec4141;
+    /* ==========================================================================
+       Dark Theme (黑曜石 · 抹茶绿 / Obsidian Dark)
+       ========================================================================== */
+    --app-bg: #10120f;
+    --sidebar-bg: #141712;
+    --card-bg: #181b15;
+    --card-hover: #1f231b;
+    --card-active: #272d21;
+    --elevated-bg: #1c2017;
+    --popover-bg: #191c16;
+
+    --border: rgba(255, 255, 255, 0.08);
+    --border-subtle: rgba(255, 255, 255, 0.04);
+    --border-hover: rgba(255, 255, 255, 0.16);
+
+    --text-primary: #f5f6f0;
+    --text-secondary: #a3a99e;
+    --text-muted: #72796e;
+    --text-subtle: #555c50;
+
+    --accent: #d6f379;
+    --accent-hover: #e4f796;
+    --accent-text: #13170d;
+    --accent-soft: rgba(214, 243, 121, 0.12);
+    --accent-glow: rgba(214, 243, 121, 0.28);
+    --accent-border: rgba(214, 243, 121, 0.32);
+
+    --heart: #ec4141;
+    --heart-hover: #ff5656;
+
+    --player-bg: rgba(22, 25, 19, 0.94);
+    --player-border: rgba(255, 255, 255, 0.07);
+
+    --scrollbar-thumb: rgba(255, 255, 255, 0.12);
+    --scrollbar-thumb-hover: #d6f379;
+
+    --modal-overlay: rgba(0, 0, 0, 0.72);
+    --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.35);
+    --shadow-popover: 0 16px 36px rgba(0, 0, 0, 0.55);
+
+    --disc-surface: repeating-radial-gradient(circle, #242720 0 3px, #181a16 4px 7px);
+  }
+
+  html.light {
+    /* ==========================================================================
+       Light Theme (和纸 · 晨光 / Paper & Morning Light)
+       ========================================================================== */
+    --app-bg: #f7f6f1;
+    --sidebar-bg: #eceae3;
+    --card-bg: #ffffff;
+    --card-hover: #f3f1ea;
+    --card-active: #e8e5dc;
+    --elevated-bg: #ffffff;
+    --popover-bg: #ffffff;
+
+    --border: rgba(0, 0, 0, 0.08);
+    --border-subtle: rgba(0, 0, 0, 0.04);
+    --border-hover: rgba(0, 0, 0, 0.15);
+
+    --text-primary: #1d211a;
+    --text-secondary: #586052;
+    --text-muted: #828a7c;
+    --text-subtle: #a4ab9f;
+
+    --accent: #4f731d;
+    --accent-hover: #3e5d14;
+    --accent-text: #ffffff;
+    --accent-soft: rgba(79, 115, 29, 0.1);
+    --accent-glow: rgba(79, 115, 29, 0.2);
+    --accent-border: rgba(79, 115, 29, 0.28);
+
+    --heart: #e53935;
+    --heart-hover: #d32f2f;
+
+    --player-bg: rgba(255, 255, 255, 0.95);
+    --player-border: rgba(0, 0, 0, 0.07);
+
+    --scrollbar-thumb: rgba(0, 0, 0, 0.14);
+    --scrollbar-thumb-hover: #4f731d;
+
+    --modal-overlay: rgba(20, 24, 18, 0.45);
+    --shadow-card: 0 6px 20px rgba(35, 43, 29, 0.06);
+    --shadow-popover: 0 12px 32px rgba(35, 43, 29, 0.14);
+
+    --disc-surface: repeating-radial-gradient(circle, #242720 0 3px, #181a16 4px 7px);
   }
 
   body {
-    background-color: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", "Source Han Sans SC", "Noto Sans SC", sans-serif;
+    background-color: var(--app-bg);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
     user-select: none;
     overflow: hidden;
     margin: 0;
     padding: 0;
     text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: subpixel-antialiased;
-    -moz-osx-font-smoothing: auto;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
-/* Windows Font Sharpness & Contrast Enhancement */
-html:not(.light) {
-  --text: #f5f5f0;
-}
-
-html:not(.light) .text-\[\#686d65\] {
-  color: #8c9386 !important;
-}
-
-html:not(.light) .text-\[\#8d9188\] {
-  color: #a4a99e !important;
-}
-
-html:not(.light) .text-\[\#9ca095\] {
-  color: #b2b7ac !important;
-}
-
-html:not(.light) .text-\[\#a8aca3\] {
-  color: #c4c8be !important;
-}
-
-html:not(.light) .text-\[\#b3b7aa\] {
-  color: #ccd1c4 !important;
-}
-
-/* Custom Minimal Scrollbar */
+/* ==========================================================================
+   Minimal Custom Scrollbars
+   ========================================================================== */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -66,16 +116,18 @@ html:not(.light) .text-\[\#b3b7aa\] {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--scrollbar-thumb);
   border-radius: 9999px;
   transition: background 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--lime);
+  background: var(--scrollbar-thumb-hover);
 }
 
-/* Vinyl animation */
+/* ==========================================================================
+   Common Animations & Keyframes
+   ========================================================================== */
 @keyframes spin-slow {
   from {
     transform: rotate(0deg);
@@ -86,7 +138,7 @@ html:not(.light) .text-\[\#b3b7aa\] {
 }
 
 .animate-spin-slow {
-  animation: spin-slow 20s linear infinite;
+  animation: spin-slow 22s linear infinite;
 }
 
 .paused {
@@ -130,35 +182,19 @@ html:not(.light) .text-\[\#b3b7aa\] {
   animation: wave-bar 0.8s ease-in-out 0.1s infinite;
 }
 
-/* Hero Section Disc */
-.hero-disc {
-  position: absolute;
-  right: 6%;
-  top: 25px;
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  background: repeating-radial-gradient(circle, #242720 0 3px, #181a16 4px 7px);
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.65);
+/* Vinyl disc center play button hover state */
+.vinyl-center-play-btn {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.88);
+  transition: opacity 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.2s ease;
 }
 
-.hero-disc::before {
-  content: "";
-  position: absolute;
-  inset: 22%;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #ddc396, #9d795e 38%, #384239 75%);
-}
-
-.hero-disc::after {
-  content: "";
-  position: absolute;
-  inset: calc(50% - 8px);
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #ddd;
-  border: 4px solid #35372e;
+.turntable-platter:hover .vinyl-center-play-btn,
+.vinyl-center-play-btn:hover {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
 }
 
 /* Card Cover Concentric Ring */
@@ -172,425 +208,34 @@ html:not(.light) .text-\[\#b3b7aa\] {
   pointer-events: none;
 }
 
-/* ==========================================================================
-   和纸·晨光 (Paper & Morning Matcha) - 雅致亮色主题
-   ========================================================================== */
-
-html.light {
-  --bg: #f7f6f1;
-  --bg-sidebar: #eceae3;
-  --bg-card: #ffffff;
-  --bg-hover: #e5e3db;
-  --bg-active: #dedbd0;
-  --line: rgba(0, 0, 0, 0.08);
-  --text: #1d211a;
-  --muted: #6b7262;
-  --lime: #4f731d;
-  --lime-hover: #3e5d14;
-}
-
-html.light body,
-html.light #app {
-  background-color: #f7f6f1 !important;
-  color: #1d211a !important;
-}
-
-/* Backgrounds */
-html.light .bg-\[\#10110f\] {
-  background-color: #f7f6f1 !important;
-}
-
-html.light .bg-\[\#141612\] {
-  background-color: #eceae3 !important;
-}
-
-html.light .bg-\[\#171916\],
-html.light .bg-\[\#15161c\]\/95 {
-  background-color: #ffffff !important;
-}
-
-html.light .bg-\[\#171916f5\] {
-  background-color: rgba(255, 255, 255, 0.95) !important;
-  box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.05) !important;
-}
-
-html.light .bg-\[\#1a1d17\] {
-  background-color: #ffffff !important;
-}
-
-html.light .bg-\[\#1b1e19\] {
-  background-color: #e5e3db !important;
-}
-
-html.light .hover\:bg-\[\#1b1e19\]:hover {
-  background-color: #e5e3db !important;
-}
-
-html.light .bg-\[\#20231d\],
-html.light .bg-\[\#222d1e\],
-html.light .bg-\[\#23261f\],
-html.light .bg-\[\#282d23\],
-html.light .bg-\[\#2c3127\] {
-  background-color: #dedbd0 !important;
-}
-
-html.light .hover\:bg-\[\#20231d\]:hover,
-html.light .hover\:bg-\[\#222d1e\]:hover,
-html.light .hover\:bg-\[\#23261f\]:hover {
-  background-color: #d6d3c7 !important;
-}
-
-html.light .bg-\[\#1b2318\] {
-  background-color: #edf3e4 !important;
-}
-
-html.light .bg-\[\#1e1c16\],
-html.light .bg-\[\#28251c\] {
-  background-color: #fbf3e4 !important;
-}
-
-html.light .bg-\[\#44483f\] {
-  background-color: #d8d4c7 !important;
-}
-
-/* Primary Lime Buttons */
-html.light .bg-\[\#d6f379\] {
-  background-color: #4f731d !important;
-  color: #ffffff !important;
-}
-
-html.light .hover\:bg-\[\#e4f796\]:hover {
-  background-color: #3e5d14 !important;
-}
-
-/* Play button circle in player bar */
-html.light .bg-\[\#eeeede\] {
-  background-color: #24291f !important;
-  color: #ffffff !important;
-}
-
-html.light .hover\:bg-white:hover {
-  background-color: #171a14 !important;
-}
-
-html.light .bg-\[\#eeeede\] svg,
-html.light .hover\:bg-white svg {
-  fill: #ffffff !important;
-  color: #ffffff !important;
-}
-
-/* Transparent overlays */
-html.light .bg-white\/\[0\.02\],
-html.light .bg-white\/\[0\.04\],
-html.light .bg-white\/\[0\.06\],
-html.light .bg-white\/\[0\.08\],
-html.light .bg-white\/5,
-html.light .bg-white\/10 {
-  background-color: rgba(0, 0, 0, 0.05) !important;
-}
-
-html.light .hover\:bg-white\/\[0\.08\]:hover,
-html.light .hover\:bg-white\/\[0\.1\]:hover,
-html.light .hover\:bg-white\/\[0\.12\]:hover,
-html.light .hover\:bg-white\/\[0\.15\]:hover,
-html.light .hover\:bg-white\/\[0\.16\]:hover {
-  background-color: rgba(0, 0, 0, 0.08) !important;
-}
-
-html.light .bg-black\/40 {
-  background-color: rgba(0, 0, 0, 0.25) !important;
-}
-
-html.light .bg-black\/60,
-html.light .bg-black\/70 {
-  background-color: rgba(0, 0, 0, 0.45) !important;
-}
-
-/* Borders */
-html.light .border-white\/\[0\.04\],
-html.light .border-white\/\[0\.06\],
-html.light .border-white\/\[0\.08\],
-html.light .border-white\/\[0\.1\],
-html.light .border-white\/\[0\.12\],
-html.light .border-white\/\[0\.15\],
-html.light .border-white\/\[0\.16\],
-html.light .border-white\/5,
-html.light .border-white\/10 {
-  border-color: rgba(0, 0, 0, 0.09) !important;
-}
-
-html.light .hover\:border-white\/\[0\.08\]:hover,
-html.light .hover\:border-white\/\[0\.16\]:hover {
-  border-color: rgba(0, 0, 0, 0.18) !important;
-}
-
-html.light .border-\[\#10110f\] {
-  border-color: #f7f6f1 !important;
-}
-
-html.light .border-\[\#282b22\],
-html.light .border-\[\#333544\] {
-  border-color: #d8d4c7 !important;
-}
-
-html.light .border-\[\#d6f379\]\/20,
-html.light .border-\[\#d6f379\]\/30,
-html.light .border-\[\#d6f379\]\/40,
-html.light .border-\[\#d6f379\]\/60 {
-  border-color: rgba(79, 115, 29, 0.3) !important;
-}
-
-html.light .border-\[\#e0bb78\]\/30 {
-  border-color: rgba(180, 83, 9, 0.3) !important;
-}
-
-/* Typography / Text Colors */
-html.light .text-\[\#f1f0e9\],
-html.light .text-\[\#f4f3ec\],
-html.light .text-\[\#f5f5f0\] {
-  color: #151911 !important;
-}
-
-html.light .hover\:text-\[\#f1f0e9\]:hover,
-html.light .hover\:text-\[\#f4f3ec\]:hover,
-html.light .hover\:text-\[\#f5f5f0\]:hover {
-  color: #0b0d09 !important;
-}
-
-html.light .text-\[\#a8aca3\],
-html.light .text-\[\#c6c9c0\],
-html.light .text-\[\#c6cbbe\],
-html.light .text-\[\#9ca095\],
-html.light .text-\[\#b3b7aa\],
-html.light .text-\[\#c4c8bc\] {
-  color: #3b4233 !important;
-}
-
-html.light .hover\:text-\[\#a8aca3\]:hover {
-  color: #1f251a !important;
-}
-
-html.light .text-\[\#8d9188\] {
-  color: #4f5847 !important;
-}
-
-html.light .text-\[\#686d65\] {
-  color: #5c6653 !important;
-}
-
-html.light .text-\[\#d6f379\] {
-  color: #385a12 !important;
-}
-
-html.light .hover\:text-\[\#d6f379\]:hover {
-  color: #263e0b !important;
-}
-
-html.light .text-\[\#1a1d13\] {
-  color: #ffffff !important;
-}
-
-html.light .text-\[\#e0bb78\] {
-  color: #92540b !important;
-}
-
-html.light .fill-\[\#d6f379\] {
-  fill: #385a12 !important;
-}
-
-html.light .fill-\[\#1a1d13\] {
-  fill: #ffffff !important;
-}
-
-html.light .bg-\[\#d6f379\]\/\[0\.03\] {
-  background-color: rgba(56, 90, 18, 0.05) !important;
-}
-
-html.light .bg-\[\#d6f379\]\/15,
-html.light .bg-\[\#d6f379\]\/20 {
-  background-color: rgba(56, 90, 18, 0.12) !important;
-}
-
-/* Accent for audio slider */
-html.light .accent-\[\#d6f379\] {
-  accent-color: #385a12 !important;
-}
-
-/* Light Mode Equalizer Waves */
-html.light .wave-bar-1,
-html.light .wave-bar-2,
-html.light .wave-bar-3,
-html.light .wave-bar-4 {
-  background-color: #385a12 !important;
-}
-
-/* Badges overlaying cover art or dark surfaces must preserve crisp white text */
-html.light .bg-black\/60,
-html.light .bg-black\/70,
-html.light .bg-black\/80 {
-  background-color: rgba(0, 0, 0, 0.65) !important;
-}
-
-html.light .bg-black\/60 *,
-html.light .bg-black\/70 *,
-html.light .bg-black\/80 * {
-  color: #ffffff !important;
-}
-
-html.light .bg-black\/60 svg,
-html.light .bg-black\/70 svg {
-  color: #d6f379 !important;
-}
-
-/* Light Mode Hero Banner */
-html.light section[style*="radial-gradient"] {
-  background: radial-gradient(ellipse at 78% 50%, rgba(133, 161, 88, 0.28), transparent 45%), linear-gradient(110deg, #e4ecda, #edf2e6 55%, #e6efe1) !important;
-  border-color: rgba(79, 115, 29, 0.2) !important;
-}
-
-html.light section[style*="radial-gradient"] h1 {
-  color: #121c0b !important;
-  font-weight: 800 !important;
-}
-
-html.light section[style*="radial-gradient"] p {
-  color: #324227 !important;
-  font-weight: 500 !important;
-}
-
-html.light section[style*="radial-gradient"] span.font-mono {
-  color: #27470b !important;
-  font-weight: 700 !important;
-}
-
-html.light .hero-disc {
-  background: repeating-radial-gradient(circle, #e6e4da 0 3px, #dad7cb 4px 7px) !important;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.1) !important;
-}
-
 html.light .cover-ring::after {
-  border-color: rgba(0, 0, 0, 0.12) !important;
+  border-color: rgba(0, 0, 0, 0.12);
 }
 
-/* Light Scrollbar */
-html.light ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.16) !important;
+/* Shimmer placeholder */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
-html.light ::-webkit-scrollbar-thumb:hover {
-  background: #385a12 !important;
+.animate-shimmer {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 25%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0.03) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s infinite;
 }
 
-/* ==========================================================================
-   Vinyl Player - Light Theme Optimization
-   ========================================================================== */
-html.light .vinyl-player-root {
-  background-color: #f7f6f1 !important;
+html.light .animate-shimmer {
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.03) 25%, rgba(0, 0, 0, 0.07) 50%, rgba(0, 0, 0, 0.03) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s infinite;
 }
 
-html.light .vinyl-player-overlay {
-  background: linear-gradient(
-    to bottom,
-    rgba(247, 246, 241, 0.92),
-    rgba(240, 238, 228, 0.76),
-    rgba(247, 246, 241, 0.96)
-  ) !important;
-}
-
-html.light .vinyl-player-root .turntable-platter {
-  background-color: #eae7dc !important;
-  border-color: #d6d2c2 !important;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.1), inset 0 2px 6px rgba(255, 255, 255, 0.7) !important;
-}
-
-html.light .vinyl-player-root .tonearm circle[fill="#2d3027"] {
-  fill: #dedbd0 !important;
-  stroke: #beb9a7 !important;
-}
-html.light .vinyl-player-root .tonearm circle[fill="#141612"] {
-  fill: #828a78 !important;
-}
-html.light .vinyl-player-root .tonearm path[stroke="#c2c7b5"] {
-  stroke: #5d6354 !important;
-}
-
-html.light .vinyl-player-root header button {
-  background-color: rgba(0, 0, 0, 0.06) !important;
-  border-color: rgba(0, 0, 0, 0.1) !important;
-  color: #353d2d !important;
-}
-html.light .vinyl-player-root header button:hover {
-  background-color: rgba(0, 0, 0, 0.1) !important;
-  color: #12160e !important;
-}
-
-html.light .vinyl-player-root header h2 {
-  color: #141a10 !important;
-  font-weight: 700 !important;
-}
-html.light .vinyl-player-root header p {
-  color: #424c39 !important;
-  font-weight: 500 !important;
-}
-
-html.light .vinyl-player-root .album-badge {
-  background-color: rgba(0, 0, 0, 0.05) !important;
-  border-color: rgba(0, 0, 0, 0.1) !important;
-  color: #323b2b !important;
-  font-weight: 500 !important;
-}
-
-/* Fluid Scrolling Lyrics in Light Mode */
-html.light .vinyl-player-root .lyric-active {
-  color: #27490b !important;
-  text-shadow: 0 2px 10px rgba(39, 73, 11, 0.2) !important;
-  font-weight: 800 !important;
-  filter: none !important;
-}
-
-html.light .vinyl-player-root .lyric-inactive {
-  color: #4e5845 !important;
-  opacity: 0.6 !important;
-}
-html.light .vinyl-player-root .lyric-inactive:hover {
-  opacity: 0.95 !important;
-  color: #12160e !important;
-}
-
-html.light .vinyl-player-root .lyric-trans-active {
-  color: #8c5208 !important;
-  font-weight: 600 !important;
-}
-html.light .vinyl-player-root .lyric-trans-inactive {
-  color: #646e5a !important;
-  opacity: 0.7 !important;
-}
-
-/* Vinyl Center Play/Pause Control Button - Hover Only Display */
-.vinyl-center-play-btn {
-  opacity: 0;
-  pointer-events: none;
-  transform: scale(0.88);
-  transition: opacity 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.2s ease !important;
-}
-
-.turntable-platter:hover .vinyl-center-play-btn,
-.vinyl-center-play-btn:hover {
-  opacity: 1 !important;
-  pointer-events: auto !important;
-  transform: scale(1) !important;
-}
-
-/* Vinyl Center Play/Pause Control Button in Light Theme */
-html.light .vinyl-center-play-btn {
-  background-color: rgba(255, 255, 255, 0.88) !important;
-  border-color: rgba(0, 0, 0, 0.15) !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
-}
-html.light .vinyl-center-play-btn:hover {
-  background-color: #ffffff !important;
-}
-html.light .vinyl-center-play-btn svg {
-  color: #385a12 !important;
-  fill: #385a12 !important;
+/* Focus visible styling */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }

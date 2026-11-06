@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>雾岛 FM · Logo 设计方案选拔</title>
+  <style>
+    :root {
+      --bg: #10120f;
+      --card-bg: #181b15;
+      --text: #f5f6f0;
+      --muted: #8d9387;
+      --accent: #d6f379;
+      --border: rgba(255, 255, 255, 0.08);
+    }
+
+    body.light {
+      --bg: #f7f6f1;
+      --card-bg: #ffffff;
+      --text: #1d211a;
+      --muted: #6a7162;
+      --accent: #4f731d;
+      --border: rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      padding: 40px 24px 80px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    p.subtitle {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 20px;
+      padding: 8px 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text);
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: all 0.2s;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 28px;
+      margin-bottom: 60px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      flex-col;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      position: relative;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+      border-color: var(--accent);
+    }
+
+    .badge {
+      align-self: flex-start;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(214, 243, 121, 0.15);
+      color: var(--accent);
+      margin-bottom: 16px;
+      font-family: monospace;
+    }
+
+    .logo-preview-box {
+      width: 180px;
+      height: 180px;
+      margin: 12px 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover .logo-preview-box {
+      transform: scale(1.05);
+    }
+
+    .logo-preview-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .size-strip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 12px 16px;
+      background: var(--bg);
+      border-radius: 12px;
+      width: 100%;
+      margin-top: auto;
+    }
+
+    .size-strip img {
+      border-radius: 20%;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--muted);
+    }
+
+    body.light .tag {
+      background: rgba(0, 0, 0, 0.04);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>雾岛 FM · App Logo 方案评选</h1>
+      <p class="subtitle">让音乐陪你慢下来 · 针对黑曜石暗色与和纸亮色双重主题深度优化定制</p>
+      <button class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">☀️</span>
+        <span id="theme-text">切换为亮色预览模式</span>
+      </button>
+    </header>
+
+    <div class="grid">
+      <!-- Option 1 -->
+      <div class="card">
+        <span class="badge">方案 A · 极简黑胶</span>
+        <div class="logo-preview-box">
+          <img src="./logo-concept-1.svg" alt="方案 A" />
+        </div>
+        <h3 class="card-title">「黑胶与雾岚」</h3>
+        <div class="tags">
+          <span class="tag">同心黑胶</span>
+          <span class="tag">旋转微风</span>
+          <span class="tag">高保真 Hi-Fi</span>
+        </div>
+        <p class="card-desc">
+          黑胶唱盘与缭绕雾环的有机融合。动态同心弧线层叠交织，中控核心宛如唱片转轴与初升晨星，象征音乐在静谧中旋转绽放。
+        </p>
+        <div class="size-strip">
+          <img src="./logo-concept-1.svg" width="48" height="48" title="48px 效果" />
+          <img src="./logo-concept-1.svg" width="32" height="32" title="32px 效果" />
+          <img src="./logo-concept-1.svg" width="20" height="20" title="20px 任务栏效果" />
+        </div>
+      </div>
+
+      <!-- Option 2 -->
+      <div class="card">
+        <span class="badge">方案 B · 诗意律动</span>
+        <div class="logo-preview-box">
+          <img src="./logo-concept-2.svg" alt="方案 B" />
+        </div>
+        <h3 class="card-title">「声波山峦与岛屿」</h3>
+        <div class="tags">
+          <span class="tag">雾岛意象</span>
+          <span class="tag">音频电平</span>
+          <span class="tag">空灵禅意</span>
+        </div>
+        <p class="card-desc">
+          取“雾岛”之意，用高低起伏的音频律动电平（Equalizer）勾勒出湖心青翠岛屿的起伏山峦，下衬水波倒影，深邃而治愈。
+        </p>
+        <div class="size-strip">
+          <img src="./logo-concept-2.svg" width="48" height="48" title="48px 效果" />
+          <img src="./logo-concept-2.svg" width="32" height="32" title="32px 效果" />
+          <img src="./logo-concept-2.svg" width="20" height="20" title="20px 任务栏效果" />
+        </div>
+      </div>
+
+      <!-- Option 3 -->
+      <div class="card">
+        <span class="badge">方案 C · 现代符号</span>
+        <div class="logo-preview-box">
+          <img src="./logo-concept-3.svg" alt="方案 C" />
+        </div>
+        <h3 class="card-title">「莫比乌斯旋律」</h3>
+        <div class="tags">
+          <span class="tag">双环耳机</span>
+          <span class="tag">无限陪伴</span>
+          <span class="tag">网易云红宝石</span>
+        </div>
+        <p class="card-desc">
+          流体光带环抱成无限循环的耳机与声波“M”，正中镶嵌一枚经典网易云音乐红宝石，寓意好音乐无限循环、永不间断的温情陪伴。
+        </p>
+        <div class="size-strip">
+          <img src="./logo-concept-3.svg" width="48" height="48" title="48px 效果" />
+          <img src="./logo-concept-3.svg" width="32" height="32" title="32px 效果" />
+          <img src="./logo-concept-3.svg" width="20" height="20" title="20px 任务栏效果" />
+        </div>
+      </div>
+
+      <!-- Option 4 -->
+      <div class="card">
+        <span class="badge">方案 D · 发烧唱机</span>
+        <div class="logo-preview-box">
+          <img src="./logo-concept-4.svg" alt="方案 D" />
+        </div>
+        <h3 class="card-title">「发烧唱机徽标」</h3>
+        <div class="tags">
+          <span class="tag">金属唱臂</span>
+          <span class="tag">黑胶密纹</span>
+          <span class="tag">拟物发烧友</span>
+        </div>
+        <p class="card-desc">
+          重金属转盘与精密唱针的完美结合。唱臂轻触黑胶密纹，针尖绽放抹茶微芒，物理机械质感拉满，一眼便知是专业级发烧音乐软件。
+        </p>
+        <div class="size-strip">
+          <img src="./logo-concept-4.svg" width="48" height="48" title="48px 效果" />
+          <img src="./logo-concept-4.svg" width="32" height="32" title="32px 效果" />
+          <img src="./logo-concept-4.svg" width="20" height="20" title="20px 任务栏效果" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const isLight = document.body.classList.toggle('light');
+      document.getElementById('theme-icon').textContent = isLight ? '🌙' : '☀️';
+      document.getElementById('theme-text').textContent = isLight ? '切换为深色预览模式' : '切换为亮色预览模式';
+    }
+  </script>
+</body>
+</html>

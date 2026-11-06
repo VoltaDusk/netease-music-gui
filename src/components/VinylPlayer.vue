@@ -41,32 +41,32 @@ watch(
 <template>
   <div
     v-if="playerState.isVinylOpen"
-    class="vinyl-player-root fixed inset-0 z-50 flex flex-col select-none overflow-hidden bg-[#10110f] animate-in fade-in duration-300"
+    class="vinyl-player-root fixed inset-0 z-50 flex flex-col select-none overflow-hidden bg-[var(--app-bg)] animate-in fade-in duration-300"
   >
     <!-- Dynamic Ambient Blurred Cover Art Background -->
     <div
-      class="absolute inset-0 bg-cover bg-center scale-125 filter blur-[100px] opacity-20 pointer-events-none transition-all duration-1000"
+      class="absolute inset-0 bg-cover bg-center scale-125 filter blur-[100px] opacity-25 pointer-events-none transition-all duration-1000"
       :style="{
         backgroundImage: `url(${playerState.currentSong?.al?.picUrl || DEFAULT_COVER_URL})`,
       }"
     ></div>
-    <div class="vinyl-player-overlay absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/85 pointer-events-none"></div>
+    <div class="vinyl-player-overlay absolute inset-0 bg-gradient-to-b from-[var(--app-bg)]/80 via-[var(--app-bg)]/50 to-[var(--app-bg)]/90 pointer-events-none"></div>
 
     <!-- Top Action Bar -->
-    <header class="h-16 px-8 flex items-center justify-between z-10">
+    <header class="h-16 px-8 flex items-center justify-between z-10 shrink-0">
       <button
         @click="close"
-        class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-[9px] bg-white/[0.08] hover:bg-white/[0.15] text-[#a8aca3] hover:text-[#f1f0e9] border border-white/[0.08] transition-all text-xs"
+        class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-[9px] bg-[var(--card-bg)]/80 hover:bg-[var(--card-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border)] backdrop-blur-md transition-all text-xs cursor-pointer shadow-sm"
       >
         <ChevronDown class="w-4 h-4" />
         <span>收起唱机</span>
       </button>
 
-      <div class="text-center">
-        <h2 class="text-sm font-bold text-[#f1f0e9] tracking-wide truncate max-w-md">
+      <div class="text-center px-4">
+        <h2 class="text-sm font-bold text-[var(--text-primary)] tracking-wide truncate max-w-md">
           {{ playerState.currentSong?.name || "未知音乐" }}
         </h2>
-        <p class="text-xs text-[#8d9188] mt-0.5">
+        <p class="text-xs text-[var(--text-muted)] mt-0.5">
           {{ playerState.currentSong?.ar?.map((a) => a.name).join(" / ") || "雾岛 FM" }}
         </p>
       </div>
@@ -75,21 +75,22 @@ watch(
         <button
           v-if="playerState.currentSong"
           @click="playerActions.toggleLike(playerState.currentSong.id)"
-          class="p-2 rounded-full bg-white/[0.08] hover:bg-white/[0.15] text-[#8d9188] transition-colors"
+          class="p-2 rounded-full bg-[var(--card-bg)]/80 hover:bg-[var(--card-hover)] text-[var(--text-muted)] hover:text-[#ec4141] border border-[var(--border)] transition-colors cursor-pointer shadow-sm"
+          title="喜欢这首歌"
         >
           <Heart
             class="w-4 h-4"
-            :class="playerActions.isLiked(playerState.currentSong.id) ? 'text-[#d6f379] fill-[#d6f379]' : 'text-[#8d9188]'"
+            :class="playerActions.isLiked(playerState.currentSong.id) ? 'text-[#ec4141] fill-[#ec4141]' : ''"
           />
         </button>
       </div>
     </header>
 
     <!-- Main Content Area: Turntable on Left, Synced Lyrics on Right -->
-    <main class="flex-1 flex flex-col md:flex-row items-center justify-center px-10 pb-2 gap-12 z-10 overflow-hidden">
+    <main class="flex-1 flex flex-col md:flex-row items-center justify-center px-10 pb-2 gap-10 md:gap-14 z-10 overflow-hidden">
       <!-- Left: Turntable with Tonearm and Vinyl Record -->
       <div class="w-full md:w-1/2 flex flex-col items-center justify-center relative">
-        <div class="relative w-84 h-84 flex items-center justify-center">
+        <div class="relative w-80 h-80 sm:w-84 sm:h-84 flex items-center justify-center">
           <!-- Tonearm Stylus -->
           <div
             class="absolute -top-12 right-10 w-28 h-36 z-20 pointer-events-none tonearm"
@@ -108,15 +109,15 @@ watch(
                 stroke-linecap="round"
                 fill="none"
               />
-              <!-- Cartridge Head with Lime Accent -->
-              <rect x="34" y="116" width="16" height="22" rx="3" fill="#d6f379" transform="rotate(18 42 120)" />
+              <!-- Cartridge Head with Accent -->
+              <rect x="34" y="116" width="16" height="22" rx="3" fill="var(--accent)" transform="rotate(18 42 120)" />
             </svg>
           </div>
 
           <!-- Turntable Platter Outer Rim -->
           <div
             @click="playerActions.togglePlay()"
-            class="turntable-platter group/turntable w-76 h-76 rounded-full bg-[#171916] border-4 border-[#282b22] flex items-center justify-center shadow-2xl relative cursor-pointer select-none"
+            class="turntable-platter group/turntable w-76 h-76 rounded-full bg-[#181a16] border-4 border-[#282b22] flex items-center justify-center shadow-2xl relative cursor-pointer select-none"
             :title="playerState.isPlaying ? '点击暂停' : '点击播放'"
           >
             <!-- Rotating Vinyl Disc -->
@@ -128,7 +129,7 @@ watch(
                 box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 25px rgba(0,0,0,0.6);
               "
             >
-              <!-- Center Album Cover (Enlarged artwork with refined vinyl groove border) -->
+              <!-- Center Album Cover -->
               <div class="w-48 h-48 rounded-full overflow-hidden border-4 border-black/80 shadow-inner flex items-center justify-center relative">
                 <img
                   :src="playerState.currentSong?.al?.picUrl || DEFAULT_COVER_URL"
@@ -141,19 +142,19 @@ watch(
               </div>
             </div>
 
-            <!-- Center Play/Pause Control Button (Only visible on hover, fixed upright) -->
+            <!-- Center Play/Pause Control Button (Only visible on hover) -->
             <button
               @click.stop="playerActions.togglePlay()"
-              class="vinyl-center-play-btn absolute z-30 w-14 h-14 rounded-full flex items-center justify-center bg-black/60 hover:bg-black/80 active:scale-90 backdrop-blur-md border border-white/25 text-[#f1f0e9] shadow-[0_8px_24px_rgba(0,0,0,0.65)] transition-all duration-300 cursor-pointer pointer-events-none group-hover/turntable:pointer-events-auto"
+              class="vinyl-center-play-btn absolute z-30 w-14 h-14 rounded-full flex items-center justify-center bg-black/60 hover:bg-black/80 active:scale-90 backdrop-blur-md border border-white/25 text-white shadow-[0_8px_24px_rgba(0,0,0,0.65)] transition-all duration-300 cursor-pointer pointer-events-none group-hover/turntable:pointer-events-auto"
               :title="playerState.isPlaying ? '点击暂停' : '点击播放'"
             >
               <Pause
                 v-if="playerState.isPlaying"
-                class="w-6 h-6 text-[#d6f379] fill-[#d6f379] hover:scale-110 transition-transform"
+                class="w-6 h-6 text-[var(--accent)] fill-[var(--accent)] hover:scale-110 transition-transform"
               />
               <Play
                 v-else
-                class="w-6 h-6 text-[#d6f379] fill-[#d6f379] ml-0.5 hover:scale-110 transition-transform"
+                class="w-6 h-6 text-[var(--accent)] fill-[var(--accent)] ml-0.5 hover:scale-110 transition-transform"
               />
             </button>
           </div>
@@ -161,7 +162,7 @@ watch(
 
         <!-- Album & Info Under Record -->
         <div class="mt-6 text-center">
-          <span class="album-badge text-xs px-3 py-1 rounded-[7px] bg-white/[0.06] border border-white/[0.08] text-[#8d9188]">
+          <span class="album-badge text-xs px-3 py-1 rounded-[7px] bg-[var(--card-bg)]/80 border border-[var(--border)] text-[var(--text-muted)] font-medium shadow-sm">
             专辑：{{ playerState.currentSong?.al?.name || "未知专辑" }}
           </span>
         </div>
@@ -183,22 +184,22 @@ watch(
               class="transition-all duration-300 cursor-pointer select-none group"
             >
               <p
-                class="leading-relaxed transition-all duration-300"
+                class="leading-relaxed transition-all duration-300 font-medium"
                 :class="[
                   playerState.currentLyricIndex === idx
-                    ? 'lyric-active text-[#d6f379] text-2xl font-bold scale-105 origin-left drop-shadow-[0_4px_12px_rgba(214,243,121,0.3)]'
-                    : 'lyric-inactive text-[#8d9188] text-lg opacity-40 group-hover:opacity-90 group-hover:text-[#f1f0e9]'
+                    ? 'text-[var(--accent)] text-2xl font-bold scale-105 origin-left drop-shadow-[0_4px_12px_var(--accent-glow)]'
+                    : 'text-[var(--text-muted)] text-base opacity-40 group-hover:opacity-90 group-hover:text-[var(--text-primary)]'
                 ]"
               >
                 {{ line.text }}
               </p>
               <p
                 v-if="line.translation"
-                class="text-xs mt-1 transition-opacity duration-300"
+                class="text-xs mt-1.5 transition-opacity duration-300"
                 :class="[
                   playerState.currentLyricIndex === idx
-                    ? 'lyric-trans-active text-[#e0bb78] font-medium opacity-90'
-                    : 'lyric-trans-inactive text-[#686d65] opacity-40'
+                    ? 'text-[#f59e0b] font-medium opacity-90'
+                    : 'text-[var(--text-subtle)] opacity-40'
                 ]"
               >
                 {{ line.translation }}
@@ -207,8 +208,8 @@ watch(
           </template>
 
           <!-- No Lyrics Fallback -->
-          <div v-else class="h-full flex flex-col items-center justify-center text-[#686d65] gap-3">
-            <Music class="w-8 h-8 opacity-30 text-[#d6f379]" />
+          <div v-else class="h-full flex flex-col items-center justify-center text-[var(--text-muted)] gap-3">
+            <Music class="w-8 h-8 opacity-40 text-[var(--accent)]" />
             <p class="text-xs">纯音乐，慢下来，享受静谧时光</p>
           </div>
         </div>

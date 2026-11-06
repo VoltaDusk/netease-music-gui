@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#191c16" />
+      <stop offset="60%" stop-color="#11140e" />
+      <stop offset="100%" stop-color="#090b07" />
+    </linearGradient>
+
+    <!-- Mountain Sun/Moon Glow -->
+    <radialGradient id="sunMoonGrad2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f5fed0" stop-opacity="0.9" />
+      <stop offset="40%" stop-color="#d6f379" stop-opacity="0.5" />
+      <stop offset="100%" stop-color="#d6f379" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Bar Gradients -->
+    <linearGradient id="barGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#e8fab5" />
+      <stop offset="70%" stop-color="#d6f379" />
+      <stop offset="100%" stop-color="#4f731d" />
+    </linearGradient>
+
+    <!-- Lake Wave Gradient -->
+    <linearGradient id="waveGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d6f379" stop-opacity="0.1" />
+      <stop offset="50%" stop-color="#d6f379" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#d6f379" stop-opacity="0.1" />
+    </linearGradient>
+
+    <filter id="glowShadow2" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.5" />
+      <feDropShadow dx="0" dy="0" stdDeviation="16" flood-color="#d6f379" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- Squircle Base Canvas -->
+  <rect x="24" y="24" width="464" height="464" rx="108" fill="url(#bgGrad2)" stroke="rgba(255, 255, 255, 0.08)" stroke-width="2" />
+
+  <!-- Backdrop Glowing Moon behind the Peaks -->
+  <circle cx="256" cy="180" r="90" fill="url(#sunMoonGrad2)" filter="blur(16px)" />
+  <circle cx="256" cy="180" r="46" fill="#f4f9d4" opacity="0.85" />
+
+  <!-- Acoustic Mountain / Island Equalizer Soundwave Bars -->
+  <g filter="url(#glowShadow2)">
+    <!-- Bar 1 (Leftmost edge) -->
+    <rect x="116" y="280" width="14" height="60" rx="7" fill="url(#barGrad2)" opacity="0.4" />
+    <!-- Bar 2 -->
+    <rect x="144" y="250" width="14" height="90" rx="7" fill="url(#barGrad2)" opacity="0.6" />
+    <!-- Bar 3 (Left peak flank) -->
+    <rect x="172" y="200" width="14" height="140" rx="7" fill="url(#barGrad2)" opacity="0.8" />
+    <!-- Bar 4 (Sub peak) -->
+    <rect x="200" y="165" width="14" height="175" rx="7" fill="url(#barGrad2)" />
+    <!-- Bar 5 (Main mountain summit peak / Island apex) -->
+    <rect x="228" y="120" width="14" height="220" rx="7" fill="url(#barGrad2)" />
+    <!-- Bar 6 (Summit center-right) -->
+    <rect x="256" y="138" width="14" height="202" rx="7" fill="url(#barGrad2)" />
+    <!-- Bar 7 (Right slope) -->
+    <rect x="284" y="180" width="14" height="160" rx="7" fill="url(#barGrad2)" />
+    <!-- Bar 8 (Right flank) -->
+    <rect x="312" y="220" width="14" height="120" rx="7" fill="url(#barGrad2)" opacity="0.85" />
+    <!-- Bar 9 -->
+    <rect x="340" y="260" width="14" height="80" rx="7" fill="url(#barGrad2)" opacity="0.65" />
+    <!-- Bar 10 (Rightmost) -->
+    <rect x="368" y="295" width="14" height="45" rx="7" fill="url(#barGrad2)" opacity="0.4" />
+  </g>
+
+  <!-- Water Mist & Ripples beneath the Island -->
+  <g opacity="0.85">
+    <path d="M 100 370 Q 180 358 256 370 T 412 370" fill="none" stroke="url(#waveGrad2)" stroke-width="5" stroke-linecap="round" />
+    <path d="M 140 395 Q 210 388 256 395 T 372 395" fill="none" stroke="url(#waveGrad2)" stroke-width="3.5" stroke-linecap="round" opacity="0.6" />
+    <path d="M 180 416 Q 230 412 256 416 T 332 416" fill="none" stroke="url(#waveGrad2)" stroke-width="2.5" stroke-linecap="round" opacity="0.35" />
+  </g>
+</svg>

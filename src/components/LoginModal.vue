@@ -100,12 +100,10 @@ async function syncUserProfile(cookie: string) {
       };
       userActions.loginSuccess(userProfile, cookie);
 
-      // Fetch user playlists
       api.getUserPlaylists(userProfile.userId).then((list) => {
         userActions.setUserPlaylists(list);
       });
 
-      // 立即触发云端红心喜欢的音乐同步
       playerActions.syncLikedFromCloud(userProfile.userId);
       return;
     }
@@ -113,7 +111,6 @@ async function syncUserProfile(cookie: string) {
     console.warn("Failed to fetch user profile:", err);
   }
 
-  // Fallback demo profile if account endpoint fails
   useDemoLogin();
 }
 
@@ -144,7 +141,7 @@ async function handleCookieLogin() {
 
   try {
     await syncUserProfile(customCookie.value.trim());
-  } catch (err) {
+  } catch {
     cookieError.value = "Cookie 校验失败，请检查格式或网络";
   } finally {
     isVerifyingCookie.value = false;
@@ -174,52 +171,52 @@ function close() {
 <template>
   <div
     v-if="userState.isLoginModalOpen"
-    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md select-none animate-in fade-in duration-200"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm select-none animate-in fade-in duration-200"
   >
     <div
-      class="w-full max-w-sm bg-[#171916] border border-white/[0.08] rounded-[16px] shadow-2xl overflow-hidden flex flex-col"
+      class="w-full max-w-sm bg-[var(--card-bg)] border border-[var(--border)] rounded-[18px] shadow-2xl overflow-hidden flex flex-col text-[var(--text-primary)]"
     >
       <!-- Header -->
-      <header class="h-14 px-5 flex items-center justify-between border-b border-white/[0.08] bg-white/[0.02]">
+      <header class="h-14 px-5 flex items-center justify-between border-b border-[var(--border)] bg-[var(--card-hover)]/50">
         <div class="flex items-center gap-2">
-          <div class="w-6 h-6 rounded-[7px] bg-[#d6f379] flex items-center justify-center">
-            <QrCode class="w-3.5 h-3.5 text-[#1a1d13]" />
+          <div class="w-6 h-6 rounded-[7px] bg-[var(--accent)] flex items-center justify-center text-[var(--accent-text)]">
+            <QrCode class="w-3.5 h-3.5" />
           </div>
-          <h2 class="text-xs font-bold text-[#f1f0e9] tracking-wide">登录网易云音乐</h2>
+          <h2 class="text-xs font-bold text-[var(--text-primary)] tracking-wide">登录网易云音乐</h2>
         </div>
         <button
           @click="close"
-          class="p-1.5 text-[#8d9188] hover:text-[#f1f0e9] rounded-[7px] transition-colors"
+          class="p-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--card-hover)] rounded-[7px] transition-colors cursor-pointer"
         >
           <X class="w-4 h-4" />
         </button>
       </header>
 
       <!-- Tabs Switcher -->
-      <div class="flex items-center border-b border-white/[0.08] text-xs font-medium">
+      <div class="flex items-center border-b border-[var(--border)] text-xs font-semibold">
         <button
           @click="activeTab = 'qr'"
-          class="flex-1 py-2.5 flex items-center justify-center gap-1.5 transition-colors relative"
-          :class="activeTab === 'qr' ? 'text-[#d6f379] font-bold' : 'text-[#8d9188] hover:text-[#f1f0e9]'"
+          class="flex-1 py-2.5 flex items-center justify-center gap-1.5 transition-colors relative cursor-pointer"
+          :class="activeTab === 'qr' ? 'text-[var(--text-primary)] font-bold' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'"
         >
           <Smartphone class="w-3.5 h-3.5" />
           <span>扫码登录</span>
           <div
             v-if="activeTab === 'qr'"
-            class="absolute bottom-0 left-1/4 right-1/4 h-[2px] bg-[#d6f379] rounded-full"
+            class="absolute bottom-0 left-1/4 right-1/4 h-[2px] bg-[var(--accent)] rounded-full"
           ></div>
         </button>
 
         <button
           @click="activeTab = 'cookie'"
-          class="flex-1 py-2.5 flex items-center justify-center gap-1.5 transition-colors relative"
-          :class="activeTab === 'cookie' ? 'text-[#d6f379] font-bold' : 'text-[#8d9188] hover:text-[#f1f0e9]'"
+          class="flex-1 py-2.5 flex items-center justify-center gap-1.5 transition-colors relative cursor-pointer"
+          :class="activeTab === 'cookie' ? 'text-[var(--text-primary)] font-bold' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'"
         >
           <KeyRound class="w-3.5 h-3.5" />
           <span>Cookie 凭据</span>
           <div
             v-if="activeTab === 'cookie'"
-            class="absolute bottom-0 left-1/4 right-1/4 h-[2px] bg-[#d6f379] rounded-full"
+            class="absolute bottom-0 left-1/4 right-1/4 h-[2px] bg-[var(--accent)] rounded-full"
           ></div>
         </button>
       </div>
@@ -227,7 +224,7 @@ function close() {
       <!-- Tab Content: QR Code Scan -->
       <main v-if="activeTab === 'qr'" class="p-6 flex flex-col items-center justify-center space-y-4">
         <!-- QR Code Container -->
-        <div class="relative w-44 h-44 rounded-[14px] bg-white p-3 shadow-xl flex items-center justify-center overflow-hidden border border-white/[0.08]">
+        <div class="relative w-44 h-44 rounded-[14px] bg-white p-3 shadow-md flex items-center justify-center overflow-hidden border border-black/10">
           <!-- Real QR Image -->
           <img
             v-if="qrImg"
@@ -241,7 +238,7 @@ function close() {
             v-else-if="qrStatus === 'loading'"
             class="flex flex-col items-center justify-center gap-2 text-gray-700"
           >
-            <RefreshCw class="w-6 h-6 animate-spin text-[#d6f379]" />
+            <RefreshCw class="w-6 h-6 animate-spin text-[var(--accent)]" />
             <span class="text-[11px] font-mono">生成中...</span>
           </div>
 
@@ -251,7 +248,7 @@ function close() {
             @click="generateQrCode"
             class="absolute inset-0 bg-black/85 flex flex-col items-center justify-center gap-2 text-white cursor-pointer hover:bg-black/80 transition-colors p-4 text-center"
           >
-            <RefreshCw class="w-6 h-6 text-[#d6f379]" />
+            <RefreshCw class="w-6 h-6 text-[var(--accent)]" />
             <span class="text-xs font-semibold">点击刷新二维码</span>
           </div>
 
@@ -260,28 +257,28 @@ function close() {
             v-else-if="qrStatus === 'scanned'"
             class="absolute inset-0 bg-black/85 flex flex-col items-center justify-center gap-2 text-white p-4 text-center"
           >
-            <CheckCircle2 class="w-8 h-8 text-[#d6f379] animate-pulse" />
+            <CheckCircle2 class="w-8 h-8 text-[var(--accent)] animate-pulse" />
             <span class="text-xs font-bold">扫描成功</span>
             <span class="text-[10px] text-gray-300">请在手机端确认授权</span>
           </div>
         </div>
 
         <!-- Status Tip Text -->
-        <p class="text-xs text-[#a8aca3] text-center font-medium leading-relaxed">
+        <p class="text-xs text-[var(--text-muted)] text-center font-medium leading-relaxed">
           {{ statusText }}
         </p>
 
         <!-- Fast Demo Login Button -->
-        <div class="w-full pt-2 border-t border-white/[0.08] flex flex-col items-center gap-2">
+        <div class="w-full pt-3 border-t border-[var(--border)] flex flex-col items-center gap-2">
           <button
             @click="useDemoLogin"
-            class="w-full py-2 px-3 rounded-[9px] bg-[#23261f] hover:bg-[#2c3027] border border-[#d6f379]/30 text-[#d6f379] text-xs font-bold transition-all flex items-center justify-center gap-1.5"
+            class="w-full py-2 px-3 rounded-[9px] bg-[var(--accent-soft)] hover:bg-[var(--accent-soft)]/80 border border-[var(--accent-border)] text-[var(--accent)] text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <Sparkles class="w-3.5 h-3.5" />
             <span>一键快捷体验登录 (体验黑胶身份)</span>
           </button>
-          <span class="text-[10px] text-[#686d65] text-center">
-            无需手机扫码，即可在无服务状态下体验个人主页与VIP标识
+          <span class="text-[10px] text-[var(--text-subtle)] text-center">
+            无需手机扫码，即可在离线状态下体验个人主页与专属收藏
           </span>
         </div>
       </main>
@@ -289,16 +286,16 @@ function close() {
       <!-- Tab Content: Manual Cookie Login -->
       <main v-else class="p-6 space-y-4">
         <div class="space-y-1.5">
-          <label class="block text-xs font-semibold text-[#f1f0e9]">
+          <label class="block text-xs font-semibold text-[var(--text-primary)]">
             网易云音乐 Cookie (MUSIC_U)
           </label>
           <textarea
             v-model="customCookie"
             placeholder="粘贴 MUSIC_U=... 或完整 Cookie 字符串"
             rows="4"
-            class="w-full p-2.5 rounded-[9px] bg-[#141612] border border-white/[0.08] text-[#f1f0e9] text-xs outline-none focus:border-[#d6f379]/60 font-mono transition-colors resize-none placeholder-[#686d65]"
+            class="w-full p-2.5 rounded-[9px] bg-[var(--card-hover)] border border-[var(--border)] text-[var(--text-primary)] text-xs outline-none focus:border-[var(--accent)] font-mono transition-colors resize-none placeholder-[var(--text-muted)]"
           ></textarea>
-          <p v-if="cookieError" class="text-[11px] text-[#ff6b6b]">
+          <p v-if="cookieError" class="text-[11px] text-[#ec4141]">
             {{ cookieError }}
           </p>
         </div>
@@ -306,12 +303,12 @@ function close() {
         <button
           @click="handleCookieLogin"
           :disabled="isVerifyingCookie"
-          class="w-full py-2.5 rounded-[9px] bg-[#d6f379] hover:bg-[#e4f796] text-[#1a1d13] text-xs font-bold shadow-md hover:scale-[1.01] active:scale-[0.98] disabled:opacity-50 transition-all"
+          class="w-full py-2.5 rounded-[9px] bg-[var(--accent)] text-[var(--accent-text)] text-xs font-bold shadow-md hover:scale-[1.01] active:scale-[0.98] disabled:opacity-50 transition-all cursor-pointer"
         >
           {{ isVerifyingCookie ? "正在校验登录凭证..." : "登录" }}
         </button>
 
-        <p class="text-[10px] text-[#686d65] leading-relaxed">
+        <p class="text-[10px] text-[var(--text-muted)] leading-relaxed">
           提示：可在浏览器打开 music.163.com 登录后，从开发者工具 Application -> Cookies 中复制 MUSIC_U 的值。
         </p>
       </main>

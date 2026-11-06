@@ -2,7 +2,7 @@ import { reactive } from "vue";
 
 export type ThemeMode = "dark" | "light";
 
-const STORAGE_KEY_THEME = "cloudmusic_theme_mode";
+const STORAGE_KEY_THEME = "cloudmusic_theme_mode_v2";
 
 function getInitialTheme(): ThemeMode {
   try {
